@@ -1,0 +1,21 @@
+	<<< OVO SA GLAZBOM JE OPCIONALNO >>>
+
+do 8.11. 	Predaja plana projekta. Upoznavanje sa kodom stavljenim na github
+		repozitorij te prevoðenje i izvršavanje istog.
+
+do 16.11. 	Napisan parser za modele (vertices, indices i mozda normale) i
+		napisan dio koda koj omoguæava reprodukciju glazbe.
+
+do 23.11. 	Napisan kod za iscrtavanje 3d modela i kod za iscrtavanje 2d slika na ekranu.
+
+do 30.11. 	Prikupljeni zvukovi koèenja, gasa i sudara te eventualno nekakva glazba i
+		prikupljeni modeli auta i okoliša (treba za MI ucit).
+
+do 7.12. 	Napisan parser za uèitavanje levela (struct = {ID 3d modela i transformacija u prostoru}).
+		Radi se o nasim custom datotekama. Ubaèen ili napisan collDet sustav i integrator za fiziku.
+
+do 14.12. 	Ubacivanje BCI ili neceg drugog za input. Završavanje projekta.
+
+do 21.12.	Predaja projekta.
+
+do 11.1.	Prezentacija.
