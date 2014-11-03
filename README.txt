@@ -10,6 +10,7 @@ Kako buildat:
 
 1. Instalirate sve ovo gore
 2. Napravite environment varijablu SDL2DIR koja pokazuje na root SDL2 direktorija
+2. Napravite environment varijablu GLEW_HOME koja pokazuje na root GLEW direktorija
 3. Pokrenete CMake gui i u "Where is the source code" metnete path do ovog direktorija.
    U "Where to build the binaries" metnete gdje vec ocete da se napravi projekt.
    Zatim stisnete dole Configure, pa vas pite za koj IDE i kompajler da napravi projekt, odaberite sto hocete/imate.
