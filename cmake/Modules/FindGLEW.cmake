@@ -29,6 +29,7 @@ IF (WIN32)
 			PATHS
 			$ENV{PROGRAMFILES}/GLEW/lib
             $ENV{GLEW_HOME}/lib
+            $ENV{GLEW_HOME}/lib/Release/Win32
 			${PROJECT_SOURCE_DIR}/src/nvgl/glew/bin
 	    	${PROJECT_SOURCE_DIR}/src/nvgl/glew/lib
 			DOC "The GLEW library"
