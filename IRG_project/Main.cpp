@@ -61,8 +61,8 @@ void RenderingLoop()
         mat4 V = camera.GetViewMatrix();
         mat4 M(1.0f);
         program.SetUniform("MVP", P * V * M);
-        program.SetUniform("normalMatrix", mat3(V * M));
-        program.SetUniform("lightPosition_worldspace", vec3(5.0f, 5.0f, 5.0f));
+        //program.SetUniform("normalMatrix", mat3(V * M));
+        //program.SetUniform("lightPosition_worldspace", vec3(5.0f, 5.0f, 5.0f));
 
         // 1rst attribute buffer : vertices
         glEnableVertexAttribArray(0);
