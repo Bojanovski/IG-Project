@@ -10,6 +10,7 @@ set(IRG_project_HDRS
 )
 
 file(COPY SimpleShader.frag SimpleShader.vert DESTINATION .)
+file(COPY trollface.png DESTINATION .)
 
 add_executable(IRG_project ${IRG_project_SRCS} ${IRG_project_HDRS})
 

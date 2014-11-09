@@ -4,6 +4,7 @@
 
 #include <Engine/Core/SDLHandler.h>
 #include <Engine/Common/ErrorCheck.h>
+#include <IL/il.h>
 #include <iostream>
 
 using namespace std;
@@ -13,8 +14,9 @@ namespace engine
     SDL_Window *SDLHandler::window;
     SDL_GLContext SDLHandler::opengl_context;
 
-    void SDLHandler::InitSDL(Uint32 flags)
+    void SDLHandler::Init(Uint32 flags)
     {
+        ilInit();
         SDLErrCheck(SDL_Init(flags));
         SDLErrCheck(SDL_SetRelativeMouseMode(SDL_TRUE));
     }
@@ -71,7 +73,7 @@ namespace engine
 
         glewExperimental = GL_TRUE;
         GLEWErrCheck(glewInit());
-        GLErrCheck(false);
+        GLErrCheck(true);
     }
 
     void SDLHandler::SwapBuffers()

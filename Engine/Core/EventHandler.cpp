@@ -41,7 +41,7 @@ namespace engine
 
     void EventHandler::RemoveEventListener(const EventListener *listener)
     {
-        //TODO
+        //TODO_JURE finish
     }
 
     void EventHandler::ClearEventListenerList()
@@ -74,7 +74,7 @@ namespace engine
 
     void EventHandler::RemoveUpdateable(const Updateable *updateable)
     {
-        //TODO
+        //TODO_JURE finish
     }
 
     void EventHandler::ClearUpdateableList()

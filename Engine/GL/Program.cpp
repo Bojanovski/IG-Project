@@ -3,6 +3,7 @@
 */
 
 #include <Engine/GL/Program.h>
+#include <Engine/Common/ErrorCheck.h>
 #include <iostream>
 #include <fstream>
 

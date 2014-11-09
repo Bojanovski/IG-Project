@@ -5,6 +5,7 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <Engine/Engine.h>
+#include <Engine/Common/ErrorCheck.h>
 
 using namespace engine;
 using namespace glm;
@@ -23,7 +24,21 @@ void RenderingLoop()
     static const GLfloat g_vertex_buffer_data[] = { 
         -1.0f, -1.0f, 0.0f,
         1.0f, -1.0f, 0.0f,
-        0.0f,  1.0f, 0.0f,
+        1.0f,  1.0f, 0.0f,
+
+        1.0f,  1.0f, 0.0f,
+        -1.0f, 1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
+    };
+
+    static const GLfloat uv_data[] = { 
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
     };
 
     GLuint VAO;
@@ -33,18 +48,45 @@ void RenderingLoop()
     GLuint VBO;
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data) + sizeof(uv_data), nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(g_vertex_buffer_data), g_vertex_buffer_data);
+    glBufferSubData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), sizeof(uv_data), uv_data);
 
-    glVertexAttribPointer(
+    glEnableVertexAttribArray(0);
+    GLCheckStmt(glVertexAttribPointer(
         0,                  // The attribute we want to configure
         3,                  // size
         GL_FLOAT,           // type
         GL_FALSE,           // normalized?
         0,                  // stride
         (const GLvoid*)0    // array buffer offset
-        );
+        ));
+
+
+    glEnableVertexAttribArray(1);
+    GLCheckStmt(glVertexAttribPointer(
+        1,                  // The attribute we want to configure
+        2,                  // size
+        GL_FLOAT,           // type
+        GL_FALSE,           // normalized?
+        0,                  // stride
+        (const GLvoid*)sizeof(g_vertex_buffer_data)    // array buffer offset
+        ));
+
 
     Program program("SimpleShader");
+    program.Use();
+    program.SetUniform("color_map", 0);
+
+    Texture trollface;
+    glActiveTexture(GL_TEXTURE0);
+    trollface.LoadFromFile("trollface.png");
+    trollface.Bind();
+    trollface.TexParami(GL_TEXTURE_WRAP_S, GL_REPEAT);
+    trollface.TexParami(GL_TEXTURE_WRAP_T, GL_REPEAT);
+    trollface.TexParami(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    trollface.TexParami(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
 
     glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
 
@@ -52,24 +94,13 @@ void RenderingLoop()
     {
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        // Use our shader
-        program.Use();
 
-
-        mat4 P = camera.GetProjectionMatrix();
-        mat4 V = camera.GetViewMatrix();
-        mat4 M(1.0f);
+        const mat4 P = camera.GetProjectionMatrix();
+        const mat4 V = camera.GetViewMatrix();
+        const mat4 M(1.0f);
         program.SetUniform("MVP", P * V * M);
-        //program.SetUniform("normalMatrix", mat3(V * M));
-        //program.SetUniform("lightPosition_worldspace", vec3(5.0f, 5.0f, 5.0f));
-
-        // 1rst attribute buffer : vertices
-        glEnableVertexAttribArray(0);
         
-        glDrawArrays(GL_TRIANGLES, 0, 3); // 3 indices starting at 0 -> 1 triangle
-        
-        glDisableVertexAttribArray(0);
+        glDrawArrays(GL_TRIANGLES, 0, 6); // 6 indices starting at 0 -> 2 triangles
 
         // Swap buffers
         SDLHandler::SwapBuffers();
@@ -86,7 +117,7 @@ void RenderingLoop()
 
 int main(int argc, char *argv[])
 {
-    SDLHandler::InitSDL(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+    SDLHandler::Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 
     SDLHandler::CreateWindow(
         "Test",                    // window title

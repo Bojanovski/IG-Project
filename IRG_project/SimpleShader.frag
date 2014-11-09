@@ -1,10 +1,13 @@
 #version 330 core
 
+in vec2 iuv;
+
 // Ouput data
-out vec3 color;
+out vec4 color;
+
+uniform sampler2D color_map;
 
 void main()
 {
-	color = vec3(1.0, 0.0, 0.0); //red
-
+	color = texture(color_map, iuv);
 }

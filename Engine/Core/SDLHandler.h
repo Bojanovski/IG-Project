@@ -17,7 +17,7 @@ namespace engine
 
         static void PrintSoftwareVersions();
 
-        static void InitSDL(Uint32 flags);
+        static void Init(Uint32 flags);
         static void CreateWindow(const char* title, int x, int y, int w, int h, Uint32 flags);
         static void InitGL();
         static void SwapBuffers();

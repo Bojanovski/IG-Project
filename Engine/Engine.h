@@ -8,5 +8,6 @@
 #include <Engine/Core/Core.h>
 #include <Engine/Common/ErrorCheck.h>
 #include <Engine/GL/Program.h>
+#include <Engine/GL/Texture.h>
 
 #endif
