@@ -14,4 +14,3 @@ void main()
     iuv = uv;
 	gl_Position =  MVP * vertexPosition_modelspace;
 }
-

@@ -3,9 +3,11 @@
 */
 
 #include <iostream>
+#include <ctime>
 #include <GL/glew.h>
 #include <Engine/Engine.h>
 #include <Engine/Common/ErrorCheck.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace engine;
 using namespace glm;
@@ -82,22 +84,26 @@ void RenderingLoop()
     glActiveTexture(GL_TEXTURE0);
     trollface.LoadFromFile("trollface.png");
     trollface.Bind();
+    trollface.GenerateMipmaps();
     trollface.TexParami(GL_TEXTURE_WRAP_S, GL_REPEAT);
     trollface.TexParami(GL_TEXTURE_WRAP_T, GL_REPEAT);
     trollface.TexParami(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    trollface.TexParami(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    trollface.TexParami(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    trollface.TexParamf(GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
 
 
     glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
 
     do
     {
+        const float currtime = clock();
+
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         const mat4 P = camera.GetProjectionMatrix();
         const mat4 V = camera.GetViewMatrix();
-        const mat4 M(1.0f);
+        const mat4 M = rotate(mat4(1.0f), currtime / 20.0f, vec3(0.0f, 1.0f, 0.0f));
         program.SetUniform("MVP", P * V * M);
         
         glDrawArrays(GL_TRIANGLES, 0, 6); // 6 indices starting at 0 -> 2 triangles

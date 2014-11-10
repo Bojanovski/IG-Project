@@ -58,38 +58,32 @@ namespace engine
 
     void Texture::GenerateMipmaps() const
     {
-        Bind();
         glGenerateMipmap(GL_TEXTURE_2D);
     }
 
 
     void Texture::TexParami(GLenum paramName, GLuint param) const
     {
-        Bind();
         glTexParameteri(GL_TEXTURE_2D, paramName, param);
     }
 
     void Texture::TexParamf(GLenum paramName, GLfloat param) const
     {
-        Bind();
         glTexParameterf(GL_TEXTURE_2D, paramName, param);
     }
 
     void Texture::TexParamIuiv(GLenum paramName, const GLuint *param) const
     {
-        Bind();
         glTexParameterIuiv(GL_TEXTURE_2D, paramName, param);
     }
 
     void Texture::TexParamIiv(GLenum paramName, const GLint *param) const
     {
-        Bind();
         glTexParameterIiv(GL_TEXTURE_2D, paramName, param);
     }
 
     void Texture::TexParamfv(GLenum paramName, const GLfloat *param) const
     {
-        Bind();
         glTexParameterfv(GL_TEXTURE_2D, paramName, param);
     }
 
