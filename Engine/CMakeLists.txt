@@ -55,6 +55,7 @@ set(Engine_GL_HDRS
 )
 
 set(Engine_Geometry_SRCS
+    Geometry/ObjectLoader.cpp
     Geometry/TriangleMesh.cpp
     Geometry/Model.h
     Geometry/IndexContainer.cpp
@@ -62,6 +63,7 @@ set(Engine_Geometry_SRCS
 )
 
 set(Engine_Geometry_HDRS
+    Geometry/ObjectLoader.h
     Geometry/TriangleMesh.h
     Geometry/Model.h
     Geometry/IndexContainer.h

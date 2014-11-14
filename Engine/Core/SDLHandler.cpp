@@ -5,6 +5,7 @@
 #include <Engine/Core/SDLHandler.h>
 #include <Engine/Common/ErrorCheck.h>
 #include <IL/il.h>
+#include <IL/ilu.h>
 #include <iostream>
 
 using namespace std;
@@ -17,6 +18,7 @@ namespace engine
     void SDLHandler::Init(Uint32 flags)
     {
         ilInit();
+        iluInit();
         SDLErrCheck(SDL_Init(flags));
         SDLErrCheck(SDL_SetRelativeMouseMode(SDL_TRUE));
     }
