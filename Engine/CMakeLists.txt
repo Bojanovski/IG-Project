@@ -23,6 +23,8 @@ set(Engine_Core_SRCS
     Core/EventHandler.cpp
     Core/EventListener.cpp
     Core/Updateable.cpp
+    Core/Renderer.cpp
+    Core/Sprite.cpp
 )
 
 set(Engine_Core_HDRS
@@ -34,6 +36,7 @@ set(Engine_Core_HDRS
     Core/EventHandler.h
     Core/EventListener.h
     Core/Updateable.h
+    Core/Sprite.h
 )
 
 set(Engine_GL_SRCS

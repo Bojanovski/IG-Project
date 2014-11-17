@@ -129,4 +129,15 @@ namespace engine
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
+
+    void Renderer::HandleEvent(const SDL_Event &e)
+    {
+        if(e.type == SDL_WINDOWEVENT)
+            if(e.window.event == SDL_WINDOWEVENT_RESIZED)
+            {
+                glViewport(0, 0, e.window.data1, e.window.data2);
+                SetViewSize(glm::vec2(e.window.data1, e.window.data2));
+            }
+    }
+
 }

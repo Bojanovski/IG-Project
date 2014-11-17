@@ -155,6 +155,7 @@ void Test2DRendererLoop()
 
 	// Render init
 	Renderer r;
+    EventHandler::AddEventListener(&r);
 	r.SetClearColor(glm::vec3(0.2f, 0.2f, 0.2f));
 	r.SetViewSize(glm::vec2(640,480)); // Screen size (for proper scaling)
 

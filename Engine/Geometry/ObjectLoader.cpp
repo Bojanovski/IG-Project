@@ -1,4 +1,6 @@
 #include <Engine/Geometry/ObjectLoader.h>
+#include <fstream>
+#include <iostream>
 
 namespace engine
 {

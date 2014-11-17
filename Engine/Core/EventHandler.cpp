@@ -12,6 +12,7 @@ namespace engine
     vector<EventListener*> EventHandler::listenerList;
     vector<Updateable*> EventHandler::updateableList;
     bool EventHandler::quit = false;
+    bool EventHandler::isCursorFree = false;
     float EventHandler::timeStep = 1.0f / 60.0f;
     float EventHandler::accumulator = 0.0f;
 
@@ -21,12 +22,21 @@ namespace engine
         while(SDL_PollEvent(&test_event))
         {
             if(test_event.type == SDL_QUIT || (test_event.type == SDL_KEYDOWN && test_event.key.keysym.sym == SDLK_ESCAPE))
-            {
                 quit = true;
-                ClearEventListenerList();
-                ClearUpdateableList();
-                return;
+            else if(test_event.type == SDL_KEYDOWN && test_event.key.keysym.sym == SDLK_LSHIFT)
+            {
+                SDL_SetRelativeMouseMode(SDL_FALSE);
+                SDL_ShowCursor(1);
+                isCursorFree = false;
             }
+            else if(test_event.type == SDL_KEYUP && test_event.key.keysym.sym == SDLK_LSHIFT)
+            {
+                SDL_SetRelativeMouseMode(SDL_TRUE);
+                SDL_ShowCursor(0);
+                isCursorFree = true;
+            }
+            else if(test_event.type == SDL_MOUSEMOTION && isCursorFree == false)
+                continue;
 
             for(EventListener *listener : listenerList)
                 if(listener->active)
@@ -42,11 +52,6 @@ namespace engine
     void EventHandler::RemoveEventListener(const EventListener *listener)
     {
         //TODO_JURE finish
-    }
-
-    void EventHandler::ClearEventListenerList()
-    {
-        listenerList.clear();
     }
 
     bool EventHandler::Quit()
@@ -75,10 +80,5 @@ namespace engine
     void EventHandler::RemoveUpdateable(const Updateable *updateable)
     {
         //TODO_JURE finish
-    }
-
-    void EventHandler::ClearUpdateableList()
-    {
-        updateableList.clear();
     }
 }

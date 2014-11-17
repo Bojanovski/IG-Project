@@ -10,6 +10,7 @@
 namespace engine
 {
 	class Renderer
+        : public EventListener
 	{
 	public:
 		Renderer();
@@ -23,6 +24,9 @@ namespace engine
 
 		void SetClearColor(glm::vec3 color);
 		void Clear();
+
+        void HandleEvent(const SDL_Event &e);
+
 
 	private:
 		// Camera
