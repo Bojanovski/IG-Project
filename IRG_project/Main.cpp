@@ -157,7 +157,7 @@ void Test2DRendererLoop()
 	Renderer r;
     EventHandler::AddEventListener(&r);
 	r.SetClearColor(glm::vec3(0.2f, 0.2f, 0.2f));
-	r.SetViewSize(glm::vec2(640,480)); // Screen size (for proper scaling)
+	r.SetViewSize(glm::vec2(800,600)); // Screen size (for proper scaling)
 
 	int i = 0;
 	do{
@@ -168,12 +168,12 @@ void Test2DRendererLoop()
 		r.Clear(); // Clear the screen
 
 		// Draw each arrow using RenderSprite(sprite, postition, angle, scale)
-		r.RenderSprite(&spr1, glm::vec2(213, 160), i);
-		r.RenderSprite(&spr2, glm::vec2(426, 160), -45.0f);
-		r.RenderSprite(&spr3, glm::vec2(128, 320), i);
-		r.RenderSprite(&spr4, glm::vec2(256, 320));
-		r.RenderSprite(&spr5, glm::vec2(385, 320), 45.0f, glm::vec2(1.0f, 2.0f));
-		r.RenderSprite(&spr6, glm::vec2(512, 320), 90.0f);
+		r.RenderSprite(&spr1, glm::vec2(0.3f, 0.25f), i);
+		r.RenderSprite(&spr2, glm::vec2(0.6f, 0.25f));
+		r.RenderSprite(&spr3, glm::vec2(0.1f, 0.75f), i);
+		r.RenderSprite(&spr4, glm::vec2(0.4f, 0.75f));
+		r.RenderSprite(&spr5, glm::vec2(0.7f, 0.75f), 45.0f, glm::vec2(1.0f, 2.0f));
+		r.RenderSprite(&spr6, glm::vec2(0.9f, 0.75f), 90.0f);
 
 		// Display
 		SDLHandler::SwapBuffers();
@@ -193,8 +193,8 @@ int main(int argc, char *argv[])
         "Test",                    // window title
         SDL_WINDOWPOS_UNDEFINED,   // initial x position
         SDL_WINDOWPOS_UNDEFINED,   // initial y position
-        640,                       // width, in pixels
-        480,                       // height, in pixels
+        800,                       // width, in pixels
+        600,                       // height, in pixels
         SDL_WINDOW_OPENGL |        // flags
         SDL_WINDOW_RESIZABLE |
         SDL_WINDOW_SHOWN           

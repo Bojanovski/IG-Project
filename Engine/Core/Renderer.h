@@ -16,7 +16,7 @@ namespace engine
 		Renderer();
 		~Renderer();
 
-		// Draw sprite at screen position
+		// Draw sprite at screen percent position
 		void RenderSprite(Sprite* sprite, glm::vec2 position, float angle = 0.0f, glm::vec2 scale = glm::vec2(1.0f));
 
 		void SetViewSize(glm::vec2 size);
@@ -44,6 +44,3 @@ namespace engine
 }
 
 #endif // EN_RENDERER_H
-
-////////////////////////////////////////////////////////////
-/// 

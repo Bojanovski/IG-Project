@@ -5,6 +5,8 @@
 #include <Engine/Common/ErrorCheck.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <iostream>
+
 namespace engine
 {
 	Renderer::Renderer()
@@ -67,6 +69,14 @@ namespace engine
 	void Renderer::SetViewSize(glm::vec2 size)
 	{
 		_size = size;
+
+		// Update camera
+
+		delete _camera;
+		delete _cam;
+		
+		_cam = new Camera(glm::vec3(4.0f, 3.0f, 3.0f), size.x / size.y, 60.0f);
+		_camera = new DefaultCameraHandler(*_cam, 4.0f, 0.0025f);
 	}
 
 	glm::vec2 Renderer::GetViewSize()
@@ -81,9 +91,9 @@ namespace engine
 
 	void Renderer::RenderSprite(Sprite* sprite, glm::vec2 position, float angle, glm::vec2 scale)
 	{
-		// Calculate correct postition in [0,1] range
-		position.x =  2.0f * position.x / _size.x - 1.0f;
-		position.y = -2.0f * position.y / _size.y + 1.0f;
+		// Calculate position (Origin is top left corner)
+		position.x = 2.0f * position.x - 1.0f;
+		position.y = -2.0f * position.y + 1.0f;
 
 		// Get sprite data
 		glm::vec2 spr_size = sprite->GetSize();
@@ -94,7 +104,6 @@ namespace engine
 		glm::mat4 T = glm::mat4(1.0f); // Watch out! Reverse matrix order :)
 		T = glm::translate(T, glm::vec3(position, 0.0f)); // End by moving the sprite to the drawing postition
 		T = glm::scale(T, glm::vec3(2.0f/_size, 1.0f)); // Scale according to window size
-		T = glm::translate(T, glm::vec3(0.5f, -0.5f, 0.0f)); // Move back
 		T = glm::rotate(T, angle, glm::vec3(0.0f, 0.0f, -1.0f)); // Rotate
 		T = glm::scale(T, glm::vec3(spr_size*scale, 1.0f)); // Scale
 		T = glm::translate(T, glm::vec3(-0.5f, 0.5f, 0.0f)); // First move to the center
