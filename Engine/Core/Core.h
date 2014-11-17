@@ -8,5 +8,6 @@
 #include <Engine/Core/EventHandler.h>
 #include <Engine/Core/SDLHandler.h>
 #include <Engine/Core/DefaultCameraHandler.h>
+#include <Engine/Core/Renderer.h>
 
 #endif
