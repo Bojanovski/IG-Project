@@ -12,7 +12,7 @@ namespace engine
 	Sprite::Sprite(Texture& texture)
 	{
 		_texture = &texture;
-		_size = texture.GetSize();
+		_size = glm::vec2(texture.GetWidth(), texture.GetHeight());
 		_offset = glm::vec2(0);
 	}
 

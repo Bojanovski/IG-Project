@@ -42,8 +42,8 @@ namespace engine
         GLCheckStmt(Bind());
         GLCheckStmt(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData()));
 
-		size.x = ilGetInteger(IL_IMAGE_WIDTH);
-		size.y = ilGetInteger(IL_IMAGE_HEIGHT);
+		width = ilGetInteger(IL_IMAGE_WIDTH);
+		height = ilGetInteger(IL_IMAGE_HEIGHT);
 
         ilDeleteImages(1, &imageID);
     }
@@ -95,8 +95,13 @@ namespace engine
         glDeleteTextures(1, &ID);
     }
 
-	glm::vec2 Texture::GetSize()
+	int Texture::GetWidth()
 	{
-		return size;
+		return width;
+	}
+
+	int Texture::GetHeight()
+	{
+		return height;
 	}
 };

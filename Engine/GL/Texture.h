@@ -2,7 +2,6 @@
 #define EN_TEXTURE_H
 
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 
 namespace engine
 {
@@ -23,11 +22,13 @@ namespace engine
         void TexParamIiv(GLenum paramName, const GLint *param) const;
         void TexParamfv(GLenum paramName, const GLfloat *param) const;
 
-		glm::vec2 GetSize();
+		int GetWidth();
+		int GetHeight();
 
     private:
         GLuint ID;
-		glm::vec2 size;
+		int width;
+		int height;
     };
 }
 

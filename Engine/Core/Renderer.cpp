@@ -98,14 +98,14 @@ namespace engine
 		// Get sprite data
 		glm::vec2 spr_size = sprite->GetSize();
 		glm::vec2 spr_offset = sprite->GetOffset();
-		glm::vec2 tex_size = sprite->GetTexture()->GetSize();
+		glm::vec2 tex_size = glm::vec2(sprite->GetTexture()->GetWidth(), sprite->GetTexture()->GetHeight());
 
 		// Transform matrix
 		glm::mat4 T = glm::mat4(1.0f); // Watch out! Reverse matrix order :)
 		T = glm::translate(T, glm::vec3(position, 0.0f)); // End by moving the sprite to the drawing postition
-		T = glm::scale(T, glm::vec3(2.0f/_size, 1.0f)); // Scale according to window size
+		T = glm::scale(T, glm::vec3(2.0f / _size, 1.0f)); // Scale according to view size
 		T = glm::rotate(T, angle, glm::vec3(0.0f, 0.0f, -1.0f)); // Rotate
-		T = glm::scale(T, glm::vec3(spr_size*scale, 1.0f)); // Scale
+		T = glm::scale(T, glm::vec3(spr_size * scale, 1.0f)); // Scale
 		T = glm::translate(T, glm::vec3(-0.5f, 0.5f, 0.0f)); // First move to the center
 		
 		// Disable depth and enable alpha blending
@@ -145,7 +145,7 @@ namespace engine
             if(e.window.event == SDL_WINDOWEVENT_RESIZED)
             {
                 glViewport(0, 0, e.window.data1, e.window.data2);
-                SetViewSize(glm::vec2(e.window.data1, e.window.data2));
+                //SetViewSize(glm::vec2(e.window.data1, e.window.data2));
             }
     }
 

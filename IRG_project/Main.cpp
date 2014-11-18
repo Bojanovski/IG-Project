@@ -167,13 +167,18 @@ void Test2DRendererLoop()
 
 		r.Clear(); // Clear the screen
 
-		// Draw each arrow using RenderSprite(sprite, postition, angle, scale)
-		r.RenderSprite(&spr1, glm::vec2(0.3f, 0.25f), i);
-		r.RenderSprite(&spr2, glm::vec2(0.6f, 0.25f));
-		r.RenderSprite(&spr3, glm::vec2(0.1f, 0.75f), i);
-		r.RenderSprite(&spr4, glm::vec2(0.4f, 0.75f));
-		r.RenderSprite(&spr5, glm::vec2(0.7f, 0.75f), 45.0f, glm::vec2(1.0f, 2.0f));
-		r.RenderSprite(&spr6, glm::vec2(0.9f, 0.75f), 90.0f);
+		// Draw corner arrows
+		r.RenderSprite(&spr1, glm::vec2(0.1f, 0.1f), 315);
+		r.RenderSprite(&spr1, glm::vec2(0.1f, 0.9f), 225);
+		r.RenderSprite(&spr1, glm::vec2(0.9f, 0.1f),  45);
+		r.RenderSprite(&spr1, glm::vec2(0.9f, 0.9f), 135);
+
+		// Draw the rest of the arrows
+		r.RenderSprite(&spr3, glm::vec2(0.1f, 0.5f));
+		r.RenderSprite(&spr4, glm::vec2(0.3f, 0.5f), 0, glm::vec2(1.0f, -1.0f)); // Flipped horizontally
+		r.RenderSprite(&spr2, glm::vec2(0.5f, 0.5f), i); // Rotate in the middle of the screen
+		r.RenderSprite(&spr5, glm::vec2(0.7f, 0.5f), 45.0f, glm::vec2(1.0f, 2.0f)); // Scaled and at an angle
+		r.RenderSprite(&spr6, glm::vec2(0.9f, 0.5f), 90.0f); // Turned sideways
 
 		// Display
 		SDLHandler::SwapBuffers();
@@ -193,8 +198,8 @@ int main(int argc, char *argv[])
         "Test",                    // window title
         SDL_WINDOWPOS_UNDEFINED,   // initial x position
         SDL_WINDOWPOS_UNDEFINED,   // initial y position
-        800,                       // width, in pixels
-        600,                       // height, in pixels
+        640,                       // width, in pixels
+        480,                       // height, in pixels
         SDL_WINDOW_OPENGL |        // flags
         SDL_WINDOW_RESIZABLE |
         SDL_WINDOW_SHOWN           
