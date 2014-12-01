@@ -38,7 +38,6 @@ bool LoadObj(const char *filename, Material &mat, TriangleMesh &mesh)
         }
         else if((*coord[i])[0]=='v' && (*coord[i])[1]=='t')
         {
-            std::cout<<"ucitavamo uv" << std::endl;
             glm::vec2 tmpuv;
             sscanf(coord[i]->c_str(),"vt %f %f",&tmpuv.x,&tmpuv.y);
             mesh.uvs.push_back(tmpuv);
