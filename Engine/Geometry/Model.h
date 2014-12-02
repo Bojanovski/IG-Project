@@ -9,9 +9,13 @@ namespace engine
     class Model
     {
     public:
+        GLsizei VertexDataSizeInBytes() const;
+        GLsizei IndexDataSizeInBytes() const;
 
-        std::vector<TriangleMesh*> meshes;
-        std::vector<Material*> materials;
+        void LoadToGPU();
+
+        std::vector<TriangleMesh> meshes;
+        std::vector<Material> materials;
     };
 }
 

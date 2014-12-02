@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <Engine/Core/Camera.h>
 #include <Engine/Core/DefaultCameraHandler.h>
+#include <Engine/Geometry/Model.h>
 #include <Engine/GL/Program.h>
 #include <Engine/Core/Sprite.h>
 
@@ -17,7 +18,8 @@ namespace engine
 		~Renderer();
 
 		// Draw sprite at screen percent position
-		void RenderSprite(Sprite* sprite, glm::vec2 position, float angle = 0.0f, glm::vec2 scale = glm::vec2(1.0f));
+        void RenderSprite(Sprite* sprite, glm::vec2 position, float angle = 0.0f, glm::vec2 scale = glm::vec2(1.0f));
+        void RenderModel(const Model &model);
 
 		void SetViewSize(glm::vec2 size);
 		glm::vec2 GetViewSize();
@@ -29,9 +31,7 @@ namespace engine
 
 
 	private:
-		// Camera
-		Camera* _cam;
-		DefaultCameraHandler* _camera;
+		DefaultCameraHandler _camera;
 
 		// View
 		glm::vec2 _size;
@@ -39,7 +39,8 @@ namespace engine
 		// Sprite rendering stuff
 		GLuint _quad_vao;
 		GLuint _quad_vbo;
-		Program* _2Dprogram;
+        Program _2Dprogram;
+        Program _3Dprogram;
 	};
 }
 

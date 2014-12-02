@@ -60,7 +60,7 @@ set(Engine_GL_HDRS
 set(Engine_Geometry_SRCS
     Geometry/ObjectLoader.cpp
     Geometry/TriangleMesh.cpp
-    Geometry/Model.h
+    Geometry/Model.cpp
     Geometry/IndexContainer.cpp
     Geometry/Material.cpp
 )

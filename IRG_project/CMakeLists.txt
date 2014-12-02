@@ -3,14 +3,16 @@ project(IRG_project)
 # Define the source files.
 set(IRG_project_SRCS
     Main.cpp
+    Car.cpp
 )
 
 # Define the header files.
 set(IRG_project_HDRS
+    Car.h
 )
 
-file(COPY SimpleShader.frag SimpleShader.vert sprite.frag sprite.vert DESTINATION .)
-file(COPY trollface.png arrows.png DESTINATION .)
+file(COPY Shaders DESTINATION .)
+file(COPY "../Resources/arrows.png" DESTINATION "../Resources/") 
 
 add_executable(IRG_project ${IRG_project_SRCS} ${IRG_project_HDRS})
 

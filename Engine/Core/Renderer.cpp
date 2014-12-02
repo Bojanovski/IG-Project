@@ -7,21 +7,24 @@
 
 #include <iostream>
 
+using namespace glm;
+
+
 namespace engine
 {
 	Renderer::Renderer()
+        : _2Dprogram("Shaders/sprite"), _3Dprogram("Shaders/DirectionalLight"), _camera(Camera(vec3(4.0f, 3.0f, 3.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f)
 	{
+        EventHandler::AddEventListener(&_camera);
+        EventHandler::AddUpdateable(&_camera);
+
 		// Create a quad for sprite rendering
-		GLfloat _quad[8] = {
+		static const GLfloat _quad[8] = {
 		0.0f,  0.0f,
 		0.0f, -1.0f,
 		1.0f,  0.0f,
 		1.0f, -1.0f
 		};
-
-		// Setup camera
-		_cam = new Camera(glm::vec3(4.0f, 3.0f, 3.0f), 4.0f / 3.0f, 60.0f);
-		_camera = new DefaultCameraHandler(*_cam, 4.0f, 0.0025f);
 
 		// Setup opengl state
 		glEnable(GL_DEPTH_TEST);
@@ -47,9 +50,8 @@ namespace engine
 		GLCheckStmt(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)sizeof(_quad)));
 
 		// Load 2d shader
-		_2Dprogram = new Program("sprite");
-		_2Dprogram->Use();
-		_2Dprogram->SetUniform("color_map", 0);
+		_2Dprogram.Use();
+		_2Dprogram.SetUniform("color_map", 0);
 
 		// Default screen size
 		_size = glm::vec2(640,480);
@@ -58,25 +60,13 @@ namespace engine
 	Renderer::~Renderer()
 	{
 		glDeleteBuffers(1, &_quad_vbo);
-		glDeleteProgram(_2Dprogram->id);
+		glDeleteProgram(_2Dprogram.id);
 		glDeleteVertexArrays(1, &_quad_vao);
-
-		delete _cam;
-		delete _camera;
-		delete _2Dprogram;
 	}
 
 	void Renderer::SetViewSize(glm::vec2 size)
 	{
 		_size = size;
-
-		// Update camera
-
-		delete _camera;
-		delete _cam;
-		
-		_cam = new Camera(glm::vec3(4.0f, 3.0f, 3.0f), size.x / size.y, 60.0f);
-		_camera = new DefaultCameraHandler(*_cam, 4.0f, 0.0025f);
 	}
 
 	glm::vec2 Renderer::GetViewSize()
@@ -118,10 +108,10 @@ namespace engine
 		glBindBuffer(GL_ARRAY_BUFFER, _quad_vbo);
 
 		// Ready shader
-		_2Dprogram->Use();
-		_2Dprogram->SetUniform("T", T);
-		_2Dprogram->SetUniform("offset", spr_offset/spr_size); // Offset of the sprite image on texture
-		_2Dprogram->SetUniform("size", spr_size/tex_size); // Size of the sprite image on texture
+		_2Dprogram.Use();
+		_2Dprogram.SetUniform("T", T);
+		_2Dprogram.SetUniform("offset", spr_offset/spr_size); // Offset of the sprite image on texture
+		_2Dprogram.SetUniform("size", spr_size/tex_size); // Size of the sprite image on texture
 
 		// Ready texture
 		sprite->GetTexture()->Bind();
@@ -149,4 +139,31 @@ namespace engine
             }
     }
 
+    void Renderer::RenderModel(const Model &model)
+    {
+        _3Dprogram.Use();
+
+        const mat4 V = _camera.cam.GetViewMatrix();
+        const mat4 VP = _camera.cam.GetProjectionMatrix() * V;
+
+        int i = 0;
+        for(const TriangleMesh &mesh : model.meshes)
+        {
+            const auto &mat = model.materials[i];
+
+            _3Dprogram.SetUniform("MVP", VP * mesh.transform);
+            _3Dprogram.SetUniform("M", mesh.transform);
+            _3Dprogram.SetUniform("normalMatrix", transpose(inverse(mat3(mesh.transform))));
+            _3Dprogram.SetUniform("invV", inverse(V));
+
+            _3Dprogram.SetUniform("ambient", vec3(mat.ambientColor));
+            _3Dprogram.SetUniform("diffuse", vec3(mat.diffuseColor));
+            _3Dprogram.SetUniform("specular", vec3(mat.specularColor));
+            _3Dprogram.SetUniform("shininess", mat.shininess);
+
+            mesh.Draw();
+
+            ++i;
+        }
+    }
 }
