@@ -23,6 +23,9 @@ namespace engine
         {
             in.getline(buf,256);
             coord.push_back(new string(buf));
+            glm::vec2 tmpuv;
+            sscanf(coord[i]->c_str(),"vt %f %f",&tmpuv.x,&tmpuv.y);
+            mesh.uvs.push_back(tmpuv);
         }
         for(unsigned int i=0;i<coord.size();i++)
         {
