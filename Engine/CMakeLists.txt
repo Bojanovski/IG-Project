@@ -73,10 +73,21 @@ set(Engine_Geometry_HDRS
     Geometry/Material.h
 )
 
+set(Engine_Physics_SRCS
+    Physics/Car.cpp
+    Physics/World.cpp
+)
+
+set(Engine_Physics_HDRS
+    Physics/Car.h
+    Physics/World.h
+)
+
 source_group(Common FILES ${Engine_Common_SRCS} ${Engine_Common_HDRS})
 source_group(Geometry FILES ${Engine_Geometry_SRCS} ${Engine_Geometry_HDRS})
 source_group(Core FILES ${Engine_Core_SRCS} ${Engine_Core_HDRS})
 source_group(GL FILES ${Engine_GL_SRCS} ${Engine_GL_HDRS})
+source_group(Physics FILES ${Engine_Physics_SRCS} ${Engine_Physics_HDRS})
 
 add_library(Engine STATIC
     ${Engine_HDRS}
@@ -88,6 +99,8 @@ add_library(Engine STATIC
     ${Engine_GL_HDRS}
     ${Engine_Geometry_SRCS}
     ${Engine_Geometry_HDRS}
+    ${Engine_Physics_SRCS} 
+    ${Engine_Physics_HDRS}
 )
 
 target_link_libraries(Engine 
