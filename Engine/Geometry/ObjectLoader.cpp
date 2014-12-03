@@ -214,6 +214,14 @@ namespace engine
     			outVertices.push_back(Vertex(position, normal, uv));
     		}
     	}
+	
+	coord.clear();
+	vertexIndices.clear();
+	uvIndices.clear();
+	normalIndices.clear();
+	temp_vertices.clear();
+	temp_uvs.clear();
+	temp_normals.clear();
 
         return true;
     }
