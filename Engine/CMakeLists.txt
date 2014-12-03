@@ -36,6 +36,7 @@ set(Engine_Core_HDRS
     Core/EventHandler.h
     Core/EventListener.h
     Core/Updateable.h
+    Core/Renderer.h
     Core/Sprite.h
 )
 

@@ -14,6 +14,64 @@ using namespace engine;
 using namespace glm;
 using namespace std;
 
+void TestSpeedGaugeLoop()
+{
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glDepthFunc(GL_LESS);
+
+	// Load texture
+	Texture tex;
+	tex.LoadFromFile("../Resources/hud.png");
+	tex.GenerateMipmaps();
+
+	// Sprite definitions
+	Sprite sgbg(tex); // Speed gauge background
+	sgbg.SetOffset(glm::vec2(0, 0));
+	sgbg.SetSize(glm::vec2(256, 256));
+
+	Sprite sgn(tex); // Speed gauge needle
+	sgn.SetOffset(glm::vec2(256, 0));
+	sgn.SetSize(glm::vec2(256, 256));
+
+	Renderer r;
+	EventHandler::AddEventListener(&r);
+	r.SetClearColor(glm::vec3(0.2f, 0.2f, 0.2f));
+	r.SetViewSize(glm::vec2(640, 480)); // Screen size (for proper scaling)
+
+	//Speed in km/h
+	float speed = 0.0f; 
+
+	// Animation parameters
+	float acc = 0.0f;
+
+	do{
+		// Animation
+		if (speed > 120.0f) acc -= 0.01f;
+		if (speed < 40.0f) acc += 0.01f;
+		speed += acc;
+
+		// Limit needle
+		if (speed > 160.0f) speed = 160.0f;
+		if (speed < 0.0f) speed = 0.0f;
+		
+		// Clear the screen
+		r.Clear();
+
+		// Draw speed gauge
+		r.RenderSprite(&sgbg, glm::vec2(0.15f, 0.850f), 0, glm::vec2(0.50f, 0.50f));
+		r.RenderSprite(&sgn, glm::vec2(0.15f, 0.85f), -120.0f + 240.0f*speed / 160.0f, glm::vec2(0.50f, 0.50f));
+
+		// Display
+		SDLHandler::SwapBuffers();
+
+		// Event stuff
+		EventHandler::ProcessPolledEvents();
+		EventHandler::Update();
+
+	} while (!EventHandler::Quit());
+}
+
 void Test2DRendererLoop()
 {
     glEnable(GL_DEPTH_TEST);
@@ -110,7 +168,7 @@ int main(int argc, char *argv[])
     SDLHandler::InitGL();
     SDLHandler::PrintSoftwareVersions();
 
-	Test2DRendererLoop();
+	TestSpeedGaugeLoop();
 
     SDLHandler::CleanUp();
     return 0;
