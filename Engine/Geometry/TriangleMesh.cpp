@@ -86,4 +86,12 @@ namespace engine
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, indices.Size(), indices.GetIndexDataType(), nullptr);
     }
+
+    void TriangleMesh::CleanUp()
+    {
+        glDeleteBuffers(1, &VBO);
+        glDeleteBuffers(1, &IBO);
+        glDeleteVertexArrays(1, &VAO);
+    }
+
 }

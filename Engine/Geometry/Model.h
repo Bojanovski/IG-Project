@@ -13,6 +13,7 @@ namespace engine
         GLsizei IndexDataSizeInBytes() const;
 
         void LoadToGPU();
+        void CleanUp();
 
         std::vector<TriangleMesh> meshes;
         std::vector<Material> materials;

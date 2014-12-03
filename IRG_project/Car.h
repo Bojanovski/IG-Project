@@ -22,6 +22,7 @@ public:
     const glm::mat4& GetPartTransform(CarPart part) const;
 
     const engine::Model& GetModel() const;
+    engine::Model& GetModel();
 
 private:
     engine::Model car;

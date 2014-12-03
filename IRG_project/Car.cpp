@@ -46,3 +46,8 @@ const engine::Model& CarModel::GetModel() const
 {
     return car;
 }
+
+engine::Model& CarModel::GetModel()
+{
+    return car;
+}

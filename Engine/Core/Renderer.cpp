@@ -62,13 +62,6 @@ namespace engine
 		_size = glm::vec2(640,480);
 	}
 
-	Renderer::~Renderer(void)
-	{
-		glDeleteBuffers(1, &_quad_vbo);
-		glDeleteProgram(_2Dprogram.id);
-		glDeleteVertexArrays(1, &_quad_vao);
-	}
-
 	void Renderer::SetViewSize(glm::vec2 size)
 	{
 		_size = size;
@@ -174,5 +167,14 @@ namespace engine
 
             ++i;
         }
+    }
+
+    void Renderer::CleanUp()
+    {
+        glDeleteBuffers(1, &_quad_vbo);
+        glDeleteVertexArrays(1, &_quad_vao);
+
+        _2Dprogram.Destroy();
+        _3Dprogram.Destroy();
     }
 }

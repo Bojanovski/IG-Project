@@ -34,6 +34,9 @@ void TestSpeedGaugeLoop()
 	sgn.SetOffset(glm::vec2(256, 0));
 	sgn.SetSize(glm::vec2(256, 256));
 
+    CarModel car;
+    car.LoadModel("../Resources/CAR/");
+
 	Renderer r;
 	EventHandler::AddEventListener(&r);
 	r.SetClearColor(glm::vec3(0.2f, 0.2f, 0.2f));
@@ -58,7 +61,9 @@ void TestSpeedGaugeLoop()
 		// Clear the screen
 		r.Clear();
 
-		// Draw speed gauge
+        r.RenderModel(car.GetModel());
+
+	    // Draw speed gauge
 		r.RenderSprite(&sgbg, glm::vec2(0.15f, 0.850f), 0, glm::vec2(0.50f, 0.50f));
 		r.RenderSprite(&sgn, glm::vec2(0.15f, 0.85f), -120.0f + 240.0f*speed / 160.0f, glm::vec2(0.50f, 0.50f));
 
@@ -70,6 +75,10 @@ void TestSpeedGaugeLoop()
 		EventHandler::Update();
 
 	} while (!EventHandler::Quit());
+
+    tex.Destroy();
+    r.CleanUp();
+    car.GetModel().CleanUp();
 }
 
 void Test2DRendererLoop()
@@ -108,9 +117,6 @@ void Test2DRendererLoop()
 	spr6.SetOffset(glm::vec2(192, 128));
 	spr6.SetSize(glm::vec2(64, 128));
 
-    CarModel car;
-    car.LoadModel("../Resources/CAR/");
-
 	// Render init
 	Renderer r;
     EventHandler::AddEventListener(&r);
@@ -124,8 +130,6 @@ void Test2DRendererLoop()
 			i = 0;
 
 		r.Clear(); // Clear the screen
-
-        r.RenderModel(car.GetModel());
 
 		// Draw corner arrows
 		r.RenderSprite(&spr1, glm::vec2(0.1f, 0.1f), 315);
@@ -148,6 +152,7 @@ void Test2DRendererLoop()
 		EventHandler::Update();
 
 	} while (!EventHandler::Quit());
+    tex.Destroy();
 }
 
 int main(int argc, char *argv[])
