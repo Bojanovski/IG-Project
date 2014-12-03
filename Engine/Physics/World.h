@@ -18,6 +18,7 @@ namespace engine_physics
 
 	private:
 		Car mCar;
+		glm::vec3 mGravitiy;
 	};
 }
 
