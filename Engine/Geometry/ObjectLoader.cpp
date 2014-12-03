@@ -10,7 +10,7 @@ namespace engine
     bool LoadObj(const string &path, const string &filename, Material &mat, TriangleMesh &mesh)
     {
         vector<string> coord;
-        vector<unsigned int> indeksi;
+        //vector<unsigned int> indeksi;
         vector<unsigned int> vertexIndices, uvIndices, normalIndices;
         vector<vec3> temp_vertices;
 	vector<vec2> temp_uvs;
