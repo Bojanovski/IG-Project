@@ -26,35 +26,36 @@ namespace engine
         while(!in.eof())
         {
             in.getline(buf,256);
-            coord.push_back(new string(buf));
+            coord.push_back(buf);
         }
         for(unsigned int i=0;i<coord.size();i++)
         {
-            if((*coord[i])[0]=='v' && (*coord[i])[1]==' ')
-            {
-                vec3 tmpvertex;
-                sscanf(coord[i]->c_str(),"v %f %f %f",&tmpvertex.x,&tmpvertex.y,&tmpvertex.z);
-                temp_vertices.push_back(tmpvertex);
-                //mesh.positions.push_back(tmpvertex);
-            }
-            else if((*coord[i])[0]=='v' && (*coord[i])[1]=='n')
-            {
-                vec3 tmpnormals;
-                sscanf(coord[i]->c_str(),"vn %f %f %f",&tmpnormals.x,&tmpnormals.y,&tmpnormals.z);
-                temp_normals.push_back(tmpnormals);
-                //mesh.normals.push_back(tmpnormals);
-            }
-            else if((*coord[i])[0]=='v' && (*coord[i])[1]=='t')
-            {
-                vec2 tmpuv;
-                sscanf(coord[i]->c_str(),"vt %f %f",&tmpuv.x,&tmpuv.y);
-                temp_uvs.push_back(tmpuv);
-                //mesh.uvs.push_back(tmpuv);
-            }
-            else if((*coord[i])[0]=='m' && (*coord[i])[1]=='t' && (*coord[i])[2]=='l' && (*coord[i])[3]=='l')
+
+	if(coord[i][0]=='v' && coord[i][1]==' ')
+        {
+            vec3 tmpvertex;
+            sscanf(coord[i].c_str(),"v %f %f %f",&tmpvertex.x,&tmpvertex.y,&tmpvertex.z);
+            temp_vertices.push_back(tmpvertex);
+            //mesh.positions.push_back(tmpvertex);
+        }
+        else if(coord[i][0]=='v' && coord[i][1]=='n')
+        {
+            vec3 tmpnormals;
+            sscanf(coord[i].c_str(),"vn %f %f %f",&tmpnormals.x,&tmpnormals.y,&tmpnormals.z);
+            temp_normals.push_back(tmpnormals);
+            //mesh.normals.push_back(tmpnormals);
+        }
+        else if(coord[i][0]=='v' && coord[i][1]=='t')
+        {
+            vec2 tmpuv;
+            sscanf(coord[i].c_str(),"vt %f %f",&tmpuv.x,&tmpuv.y);
+            temp_uvs.push_back(tmpuv);
+            //mesh.uvs.push_back(tmpuv);
+        }
+	else if(coord[i][0]=='m' && coord[i][1]=='t' && coord[i][2]=='l' && coord[i][3]=='l')
             {
                 char filen[200];
-                sscanf(coord[i]->c_str(),"mtllib %s",filen);
+                sscanf(coord[i].c_str(),"mtllib %s",filen);
                 ifstream mtlin(path + string(filen));
                 if(!mtlin.is_open())
                 {
@@ -155,46 +156,45 @@ namespace engine
                         mat.shininess = ns;
                     }
                 }
-                vector<string>().swap(tmp);
             }
-            else if ((*coord[i])[0]=='f')
+            else if (coord[i][0]=='f')
             {
                 unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-                if(coord[i]->find("//")!=std::string::npos)
+                if(coord[i].find("//")!=std::string::npos)
                 {
-                    sscanf(coord[i]->c_str(),"f %d//%d %d//%d %d//%d",&vertexIndex[0], &normalIndex[0], &vertexIndex[1], &normalIndex[1], &vertexIndex[2], &normalIndex[2]);
+                    sscanf(coord[i].c_str(),"f %d//%d %d//%d %d//%d",&vertexIndex[0], &normalIndex[0], &vertexIndex[1], &normalIndex[1], &vertexIndex[2], &normalIndex[2]);
                     vertexIndices.push_back(vertexIndex[0]);
-    				vertexIndices.push_back(vertexIndex[1]);
-    				vertexIndices.push_back(vertexIndex[2]);
-    				uvIndices.push_back(0);
-    				uvIndices.push_back(0);
-    				uvIndices.push_back(0);
-    				normalIndices.push_back(normalIndex[0]);
-    				normalIndices.push_back(normalIndex[1]);
-    				normalIndices.push_back(normalIndex[2]);
+                    vertexIndices.push_back(vertexIndex[1]);
+                    vertexIndices.push_back(vertexIndex[2]);
+                    uvIndices.push_back(0);
+                    uvIndices.push_back(0);
+                    uvIndices.push_back(0);
+                    normalIndices.push_back(normalIndex[0]);
+                    normalIndices.push_back(normalIndex[1]);
+                    normalIndices.push_back(normalIndex[2]);
                 }
-                else if(coord[i]->find("/")!=std::string::npos)
+                else if(coord[i].find("/")!=std::string::npos)
                 {
                     int t[3];
-                    sscanf(coord[i]->c_str(),"f %d/%d/%d %d/%d/%d %d/%d/%d", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+                    sscanf(coord[i].c_str(),"f %d/%d/%d %d/%d/%d %d/%d/%d", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
                     vertexIndices.push_back(vertexIndex[0]);
-    				vertexIndices.push_back(vertexIndex[1]);
-    				vertexIndices.push_back(vertexIndex[2]);
-    				uvIndices.push_back(uvIndex[0]);
-    				uvIndices.push_back(uvIndex[1]);
-    				uvIndices.push_back(uvIndex[2]);
-    				normalIndices.push_back(normalIndex[0]);
-    				normalIndices.push_back(normalIndex[1]);
-    				normalIndices.push_back(normalIndex[2]);
+                    vertexIndices.push_back(vertexIndex[1]);
+                    vertexIndices.push_back(vertexIndex[2]);
+                    uvIndices.push_back(uvIndex[0]);
+                    uvIndices.push_back(uvIndex[1]);
+                    uvIndices.push_back(uvIndex[2]);
+                    normalIndices.push_back(normalIndex[0]);
+                    normalIndices.push_back(normalIndex[1]);
+                    normalIndices.push_back(normalIndex[2]);
                 }
                 else
                 {
-                    sscanf(coord[i]->c_str(),"f %d %d %d",&vertexIndex[0], &vertexIndex[1], &vertexIndex[2]);
+                    sscanf(coord[i].c_str(),"f %d %d %d",&vertexIndex[0], &vertexIndex[1], &vertexIndex[2]);
                     vertexIndices.push_back(vertexIndex[0]);
-    				vertexIndices.push_back(vertexIndex[1]);
-    				vertexIndices.push_back(vertexIndex[2]);
-    				cout << "NO normlas" << endl;
-    				return false;
+                    vertexIndices.push_back(vertexIndex[1]);
+                    vertexIndices.push_back(vertexIndex[2]);
+                    cout << "NO normlas" << endl;
+                    return false;
                 }
             }
         }
