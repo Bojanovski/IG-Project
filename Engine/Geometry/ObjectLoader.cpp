@@ -1,20 +1,81 @@
 #include <Engine/Geometry/ObjectLoader.h>
 #include <fstream>
 #include <iostream>
+#include <map>
 
 using namespace std;
 using namespace glm;
 
 namespace engine
 {
+    //---------HELPER STUFF---------//
+    struct Vertex
+    {
+        Vertex(const vec3 &position, const vec3 &normal, const vec2 &uv)
+            : position(position), normal(normal), uv(uv)
+        {}
+
+        bool operator<(const Vertex &other) const
+        {
+            return memcmp((const void*)this, (const void*)&other, sizeof(Vertex)) > 0;
+        }
+
+        vec3 position;
+        vec3 normal;
+        vec2 uv;
+    };
+
+
+    static inline bool GetSimilarVertexIndex(const Vertex &packed, map<Vertex, GLuint> &vertexToOutIndex, unsigned int &result)
+    {
+        const auto it = vertexToOutIndex.find(packed);
+        if (it == vertexToOutIndex.end())
+            return false;
+        else
+        {
+            result = it->second;
+            return true;
+        }
+    }
+
+    static inline void IndexMesh(vector<Vertex> &outVertices, vector<GLuint> &outIndexData)
+    {
+        const GLuint ctVertices = outVertices.size();
+
+        vector<Vertex> copyVertices(outVertices);
+        outVertices.clear();
+        outIndexData.reserve(ctVertices);
+
+        map<Vertex, GLuint> vertexToOutIndex;
+
+        for(GLuint i = 0; i < ctVertices; ++i)
+        {
+            GLuint index;
+            bool found = GetSimilarVertexIndex(copyVertices[i], vertexToOutIndex, index);
+
+            if(found)
+                outIndexData.push_back(index);
+            else
+            {
+                outVertices.push_back(copyVertices[i]);
+                const GLuint ctOutVertices = outVertices.size();
+                outIndexData.push_back(ctOutVertices - 1);
+                vertexToOutIndex[copyVertices[i]] = ctOutVertices - 1;
+            }
+        }
+    }
+    //---------HELPER STUFF---------//
+
+
+
     bool LoadObj(const string &path, const string &filename, Material &mat, TriangleMesh &mesh)
     {
         vector<string> coord;
         //vector<unsigned int> indeksi;
         vector<unsigned int> vertexIndices, uvIndices, normalIndices;
         vector<vec3> temp_vertices;
-	vector<vec2> temp_uvs;
-	vector<vec3> temp_normals;
+        vector<vec2> temp_uvs;
+        vector<vec3> temp_normals;
 
         ifstream in(path + filename);
         if(!in.is_open())
@@ -31,28 +92,25 @@ namespace engine
         for(unsigned int i=0;i<coord.size();i++)
         {
 
-	if(coord[i][0]=='v' && coord[i][1]==' ')
-        {
-            vec3 tmpvertex;
-            sscanf(coord[i].c_str(),"v %f %f %f",&tmpvertex.x,&tmpvertex.y,&tmpvertex.z);
-            temp_vertices.push_back(tmpvertex);
-            //mesh.positions.push_back(tmpvertex);
-        }
-        else if(coord[i][0]=='v' && coord[i][1]=='n')
-        {
-            vec3 tmpnormals;
-            sscanf(coord[i].c_str(),"vn %f %f %f",&tmpnormals.x,&tmpnormals.y,&tmpnormals.z);
-            temp_normals.push_back(tmpnormals);
-            //mesh.normals.push_back(tmpnormals);
-        }
-        else if(coord[i][0]=='v' && coord[i][1]=='t')
-        {
-            vec2 tmpuv;
-            sscanf(coord[i].c_str(),"vt %f %f",&tmpuv.x,&tmpuv.y);
-            temp_uvs.push_back(tmpuv);
-            //mesh.uvs.push_back(tmpuv);
-        }
-	else if(coord[i][0]=='m' && coord[i][1]=='t' && coord[i][2]=='l' && coord[i][3]=='l')
+            if(coord[i][0]=='v' && coord[i][1]==' ')
+            {
+                vec3 tmpvertex;
+                sscanf(coord[i].c_str(),"v %f %f %f",&tmpvertex.x,&tmpvertex.y,&tmpvertex.z);
+                temp_vertices.push_back(tmpvertex);
+            }
+            else if(coord[i][0]=='v' && coord[i][1]=='n')
+            {
+                vec3 tmpnormals;
+                sscanf(coord[i].c_str(),"vn %f %f %f",&tmpnormals.x,&tmpnormals.y,&tmpnormals.z);
+                temp_normals.push_back(tmpnormals);
+            }
+            else if(coord[i][0]=='v' && coord[i][1]=='t')
+            {
+                vec2 tmpuv;
+                sscanf(coord[i].c_str(),"vt %f %f",&tmpuv.x,&tmpuv.y);
+                temp_uvs.push_back(tmpuv);
+            }
+            else if(coord[i][0]=='m' && coord[i][1]=='t' && coord[i][2]=='l' && coord[i][3]=='l')
             {
                 char filen[200];
                 sscanf(coord[i].c_str(),"mtllib %s",filen);
@@ -197,31 +255,36 @@ namespace engine
                 }
             }
         }
-        
-        for(unsigned int i=0; i<normalIndices.size(); i++)
-	{
-    		unsigned int vertexInd = vertexIndices[i];
-    		unsigned int normalsInd = normalIndices[i];
-    		unsigned int uvInd = uvIndices[i];
-		vec3 position = temp_vertices[vertexInd - 1];
-		vec3 normal = temp_normals[normalsInd - 1];
-    		if(uvInd == 0)
-    		{
-    			outVertices.push_back(Vertex(position, normal, vec2(0,0)));
-    		} else 
-    		{
-    			vec2 uv = temp_uvs[uvInd - 1];
-    			outVertices.push_back(Vertex(position, normal, uv));
-    		}
-    	}
-	
-	coord.clear();
-	vertexIndices.clear();
-	uvIndices.clear();
-	normalIndices.clear();
-	temp_vertices.clear();
-	temp_uvs.clear();
-	temp_normals.clear();
+
+        //load default tex if model doesnt have one
+        if(!mat.diffuse_tex.isAlive())
+            mat.diffuse_tex.LoadDefault();
+
+        //unwrap the indexing
+        vector<Vertex> outVertices;
+        for(int i = 0; i < vertexIndices.size(); ++i)
+        {
+            const unsigned int vertexInd = vertexIndices[i];
+            const unsigned int normalsInd = normalIndices[i];
+            const unsigned int uvInd = uvIndices[i];
+            const vec3 &position = temp_vertices[vertexInd - 1];
+            const vec3 &normal = temp_normals[normalsInd - 1];
+            const vec2 uv = uvInd ? temp_uvs[uvInd - 1] : vec2(0.0f, 0.0f);
+            outVertices.push_back(Vertex(position, normal, uv));
+        }
+
+        //re-index the mesh
+        vector<GLuint> outIndices;
+        IndexMesh(outVertices, outIndices);
+
+        //fill output mesh
+        for(const Vertex &v : outVertices)
+        {
+            mesh.positions.push_back(v.position);
+            mesh.normals.push_back(v.normal);
+            mesh.uvs.push_back(v.uv);
+        }
+        mesh.indices.SetData(outIndices);
 
         return true;
     }

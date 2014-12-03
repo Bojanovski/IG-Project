@@ -17,7 +17,7 @@ using namespace std;
 void Test2DRendererLoop()
 {
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     glDepthFunc(GL_LESS); 
 
 	// Load texture
