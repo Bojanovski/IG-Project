@@ -4,7 +4,7 @@
 using namespace engine;
 using namespace std;
 
-void Car::LoadModel(const string &path)
+void CarModel::LoadModel(const string &path)
 {
     static const string files[] = {
         "carbody.obj",
@@ -22,4 +22,19 @@ void Car::LoadModel(const string &path)
     }
 
     car.LoadToGPU();
+}
+
+glm::mat4& CarModel::GetPartTransform(CarPart part)
+{
+    return car.meshes[part].transform;
+}
+
+const glm::mat4& CarModel::GetPartTransform(CarPart part) const
+{
+    return car.meshes[part].transform;
+}
+
+const engine::Model& CarModel::GetModel() const
+{
+    return car;
 }

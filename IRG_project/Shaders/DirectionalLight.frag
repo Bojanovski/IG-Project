@@ -14,8 +14,8 @@ uniform vec3 diffuse;
 uniform vec3 specular;
 uniform float shininess;
 
-uniform vec3 lightDirection;
-uniform vec3 lightIntensity;
+uniform vec3 lightDirection = vec3(1.0, 0.0, 0.0);
+uniform vec3 lightIntensity = vec3(1.0, 1.0, 1.0);
 
 void main()
 {

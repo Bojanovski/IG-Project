@@ -50,7 +50,7 @@ void Test2DRendererLoop()
 	spr6.SetOffset(glm::vec2(192, 128));
 	spr6.SetSize(glm::vec2(64, 128));
 
-    Car car;
+    CarModel car;
     car.LoadModel("../Resources/CAR/");
 
 	// Render init
@@ -67,7 +67,7 @@ void Test2DRendererLoop()
 
 		r.Clear(); // Clear the screen
 
-        r.RenderModel(car.car);
+        r.RenderModel(car.GetModel());
 
 		// Draw corner arrows
 		r.RenderSprite(&spr1, glm::vec2(0.1f, 0.1f), 315);

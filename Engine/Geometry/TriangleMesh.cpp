@@ -5,6 +5,16 @@ using namespace glm;
 
 namespace engine
 {
+    Vertex::Vertex(void)
+    {
+    }
+
+    Vertex::Vertex(const glm::vec3 &position, const glm::vec3 &normal, const glm::vec2 &uv)
+        : position(position), normal(normal), uv(uv)
+    {
+    }
+
+
 	TriangleMesh::TriangleMesh(void)
 		: orientation(GL_CCW), transform(1.0f)
 	{
@@ -86,6 +96,4 @@ namespace engine
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, indices.Size(), indices.GetIndexDataType(), nullptr);
     }
-
-
 }
