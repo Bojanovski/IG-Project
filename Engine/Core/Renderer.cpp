@@ -12,7 +12,7 @@ using namespace glm;
 
 namespace engine
 {
-	Renderer::Renderer()
+	Renderer::Renderer(void)
         : _2Dprogram("Shaders/sprite"), _3Dprogram("Shaders/DirectionalLight"), _camera(Camera(vec3(4.0f, 3.0f, 3.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f)
 	{
         EventHandler::AddEventListener(&_camera);
@@ -49,19 +49,17 @@ namespace engine
 		glEnableVertexAttribArray(1);
 		GLCheckStmt(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)sizeof(_quad)));
 
+        _3Dprogram.Use();
+        _3Dprogram.SetUniform("lightDirection", normalize(vec3(0.0f, 1.0f, -1.0f)));
+        _3Dprogram.SetUniform("lightIntensity", vec3(1.0f, 1.0f, 1.0f));
+        _3Dprogram.SetUniform("textureSampler", 1);
+
 		// Load 2d shader
 		_2Dprogram.Use();
 		_2Dprogram.SetUniform("color_map", 0);
 
 		// Default screen size
 		_size = glm::vec2(640,480);
-	}
-
-	Renderer::~Renderer()
-	{
-		glDeleteBuffers(1, &_quad_vbo);
-		glDeleteProgram(_2Dprogram.id);
-		glDeleteVertexArrays(1, &_quad_vao);
 	}
 
 	void Renderer::SetViewSize(glm::vec2 size)
@@ -81,6 +79,8 @@ namespace engine
 
 	void Renderer::RenderSprite(Sprite* sprite, glm::vec2 position, float angle, glm::vec2 scale)
 	{
+        glActiveTexture(GL_TEXTURE0);
+
 		// Calculate position (Origin is top left corner)
 		position.x = 2.0f * position.x - 1.0f;
 		position.y = -2.0f * position.y + 1.0f;
@@ -141,6 +141,7 @@ namespace engine
 
     void Renderer::RenderModel(const Model &model)
     {
+        glActiveTexture(GL_TEXTURE1);
         _3Dprogram.Use();
 
         const mat4 V = _camera.cam.GetViewMatrix();
@@ -150,6 +151,7 @@ namespace engine
         for(const TriangleMesh &mesh : model.meshes)
         {
             const auto &mat = model.materials[i];
+            mat.diffuse_tex.Bind();
 
             _3Dprogram.SetUniform("MVP", VP * mesh.transform);
             _3Dprogram.SetUniform("M", mesh.transform);
@@ -165,5 +167,14 @@ namespace engine
 
             ++i;
         }
+    }
+
+    void Renderer::CleanUp()
+    {
+        glDeleteBuffers(1, &_quad_vbo);
+        glDeleteVertexArrays(1, &_quad_vao);
+
+        _2Dprogram.Destroy();
+        _3Dprogram.Destroy();
     }
 }

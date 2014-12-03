@@ -28,7 +28,8 @@ namespace engine
         //draw the mesh with the currently bound program
         //the program must be bound beforehand
         void Draw() const;
-        
+        void CleanUp();
+
         std::vector<glm::vec3> positions;
         std::vector<glm::vec3> normals;
         std::vector<glm::vec2> uvs;

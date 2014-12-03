@@ -14,8 +14,7 @@ namespace engine
         : public EventListener
 	{
 	public:
-		Renderer();
-		~Renderer();
+		Renderer(void);
 
 		// Draw sprite at screen percent position
         void RenderSprite(Sprite* sprite, glm::vec2 position, float angle = 0.0f, glm::vec2 scale = glm::vec2(1.0f));
@@ -29,6 +28,7 @@ namespace engine
 
         void HandleEvent(const SDL_Event &e);
 
+        void CleanUp();
 
 	private:
 		DefaultCameraHandler _camera;

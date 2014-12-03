@@ -13,6 +13,7 @@ set(IRG_project_HDRS
 
 file(COPY Shaders DESTINATION .)
 file(COPY "../Resources/arrows.png" DESTINATION "../Resources/") 
+file(COPY "../Resources/hud.png" DESTINATION "../Resources/") 
 
 add_executable(IRG_project ${IRG_project_SRCS} ${IRG_project_HDRS})
 

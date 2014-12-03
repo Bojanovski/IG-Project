@@ -16,23 +16,20 @@ uniform float shininess;
 
 uniform vec3 lightDirection;
 uniform vec3 lightIntensity;
+uniform sampler2D textureSampler;
 
 void main()
 {
     vec3 normalDirection = normalize(varyingNormalDirection);
     vec3 viewDirection = normalize(vec3(invV * vec4(0.0, 0.0, 0.0, 1.0) - position));
 
-    vec3 diffuseReflection = lightIntensity * diffuse * max(0.0, dot(normalDirection, lightDirection));
-
-    vec3 specularReflection;
-    if (dot(normalDirection, lightDirection) < 0.0) // light source on the wrong side?
+    float dotNL = dot(normalDirection, lightDirection);
+    
+    color = ambient;
+    if(dotNL > 0.0)
     {
-        specularReflection = vec3(0.0, 0.0, 0.0); // no specular reflection
+        vec3 diffuseReflection =  diffuse * dotNL * texture(textureSampler, UV).rgb;
+        vec3 specularReflection = specular * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), shininess);
+        color += lightIntensity * (diffuseReflection + specularReflection);
     }
-    else // light source on the right side
-    {
-        specularReflection = lightIntensity * specular * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), shininess);
-    }
-
-    color = ambient + diffuseReflection + specularReflection;
 }

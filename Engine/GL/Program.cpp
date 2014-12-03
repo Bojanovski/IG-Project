@@ -173,4 +173,10 @@ namespace engine
     {
         glDetachShader(id, sh.id);
     }
+
+    void Program::Destroy()
+    {
+        glDeleteProgram(id);
+    }
+
 }

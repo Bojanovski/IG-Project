@@ -8,8 +8,17 @@ using namespace std;
 
 namespace engine
 {
+    Texture::Texture(void)
+       : ID(0)
+    {
+    }
+
     void Texture::LoadFromFile(const char *filename)
     {
+        //skip if it already exists
+        if(ID)
+            return;
+
         ILuint imageID;
         ILboolean success;
         ILenum error;
@@ -42,17 +51,29 @@ namespace engine
         GLCheckStmt(Bind());
         GLCheckStmt(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData()));
 
-		width = ilGetInteger(IL_IMAGE_WIDTH);
-		height = ilGetInteger(IL_IMAGE_HEIGHT);
+        width = ilGetInteger(IL_IMAGE_WIDTH);
+        height = ilGetInteger(IL_IMAGE_HEIGHT);
 
         ilDeleteImages(1, &imageID);
+    }
+
+    void Texture::LoadDefault()
+    {
+        //skip if it already exists
+        if(ID)
+            return;
+
+        static const GLubyte white[] = {255, 255, 255, 255};
+
+        GLCheckStmt(glGenTextures(1, &ID));
+        GLCheckStmt(Bind());
+        GLCheckStmt(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, white));
     }
 
     void Texture::UnBind()
     {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
-
 
     void Texture::Bind() const
     {
@@ -93,15 +114,22 @@ namespace engine
     void Texture::Destroy()
     {
         glDeleteTextures(1, &ID);
+        ID = 0;
     }
 
-	int Texture::GetWidth()
-	{
-		return width;
-	}
+    int Texture::GetWidth()
+    {
+        return width;
+    }
 
-	int Texture::GetHeight()
-	{
-		return height;
-	}
+    int Texture::GetHeight()
+    {
+        return height;
+    }
+
+    bool Texture::isAlive() const
+    {
+        return ID;
+    }
+
 };

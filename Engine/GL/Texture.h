@@ -8,11 +8,15 @@ namespace engine
     class Texture
     {
     public:
+        Texture(void);
+        
+        bool isAlive() const;
 
         void Bind() const;
         static void UnBind();
 
         void LoadFromFile(const char *filename);
+        void LoadDefault();
         void Destroy();
 
         void GenerateMipmaps() const;

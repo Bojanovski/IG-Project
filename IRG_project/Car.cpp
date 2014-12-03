@@ -4,7 +4,7 @@
 using namespace engine;
 using namespace std;
 
-void Car::LoadModel(const string &path)
+void CarModel::LoadModel(const string &path)
 {
     static const string files[] = {
         "carbody.obj",
@@ -18,8 +18,36 @@ void Car::LoadModel(const string &path)
     {
         car.materials.push_back(Material());
         car.meshes.push_back(TriangleMesh());
-        LoadObj(path, file, car.materials[car.materials.size() - 1], car.meshes[car.meshes.size() - 1]);
+
+        Material &mat = car.materials[car.materials.size() - 1];
+        LoadObj(path, file, mat, car.meshes[car.meshes.size() - 1]);
+        mat.diffuse_tex.GenerateMipmaps();
+        mat.diffuse_tex.TexParami(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        mat.diffuse_tex.TexParami(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        mat.diffuse_tex.TexParami(GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+        mat.diffuse_tex.TexParami(GL_TEXTURE_WRAP_T, GL_REPEAT);
+        mat.diffuse_tex.TexParami(GL_TEXTURE_WRAP_S, GL_REPEAT);
     }
 
     car.LoadToGPU();
+}
+
+glm::mat4& CarModel::GetPartTransform(CarPart part)
+{
+    return car.meshes[part].transform;
+}
+
+const glm::mat4& CarModel::GetPartTransform(CarPart part) const
+{
+    return car.meshes[part].transform;
+}
+
+const engine::Model& CarModel::GetModel() const
+{
+    return car;
+}
+
+engine::Model& CarModel::GetModel()
+{
+    return car;
 }

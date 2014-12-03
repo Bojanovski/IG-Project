@@ -27,4 +27,13 @@ namespace engine
             GLErrCheck(false);
         }
     }
+
+    void Model::CleanUp()
+    {
+        for(auto &mesh : meshes)
+            mesh.CleanUp();
+        for(auto &mat : materials)
+            mat.diffuse_tex.Destroy();
+    }
+
 }
