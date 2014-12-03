@@ -12,6 +12,9 @@ namespace engine
         vector<string*> coord;
         vector<unsigned int> indeksi;
         vector<unsigned int> vertexIndices, uvIndices, normalIndices;
+        vector<vec3> temp_vertices;
+	vector<vec2> temp_uvs;
+	vector<vec3> temp_normals;
 
         ifstream in(path + filename);
         if(!in.is_open())
@@ -31,19 +34,22 @@ namespace engine
             {
                 vec3 tmpvertex;
                 sscanf(coord[i]->c_str(),"v %f %f %f",&tmpvertex.x,&tmpvertex.y,&tmpvertex.z);
-                mesh.positions.push_back(tmpvertex);
+                temp_vertices.push_back(tmpvertex);
+                //mesh.positions.push_back(tmpvertex);
             }
             else if((*coord[i])[0]=='v' && (*coord[i])[1]=='n')
             {
                 vec3 tmpnormals;
                 sscanf(coord[i]->c_str(),"vn %f %f %f",&tmpnormals.x,&tmpnormals.y,&tmpnormals.z);
-                mesh.normals.push_back(tmpnormals);
+                temp_normals.push_back(tmpnormals);
+                //mesh.normals.push_back(tmpnormals);
             }
             else if((*coord[i])[0]=='v' && (*coord[i])[1]=='t')
             {
                 vec2 tmpuv;
                 sscanf(coord[i]->c_str(),"vt %f %f",&tmpuv.x,&tmpuv.y);
-                mesh.uvs.push_back(tmpuv);
+                temp_uvs.push_back(tmpuv);
+                //mesh.uvs.push_back(tmpuv);
             }
             else if((*coord[i])[0]=='m' && (*coord[i])[1]=='t' && (*coord[i])[2]=='l' && (*coord[i])[3]=='l')
             {
@@ -193,19 +199,19 @@ namespace engine
             }
         }
         
-        for(unsigned int i=0; i<mesh.positions.size(); i++)
-	    {
+        for(unsigned int i=0; i<normalIndices.size(); i++)
+	{
     		unsigned int vertexInd = vertexIndices[i];
     		unsigned int normalsInd = normalIndices[i];
     		unsigned int uvInd = uvIndices[i];
-    		glm::vec3 position = mesh.positions.[vertexInd - 1];
-    		glm::vec3 normal = mesh.normals[normalsInd - 1];
+		vec3 position = temp_vertices[vertexInd - 1];
+		vec3 normal = temp_normals[normalsInd - 1];
     		if(uvInd == 0)
     		{
     			outVertices.push_back(Vertex(position, normal, vec2(0,0)));
     		} else 
     		{
-    			glm::vec2 uv = mesh.uvs[uvInd - 1];
+    			vec2 uv = temp_uvs[uvInd - 1];
     			outVertices.push_back(Vertex(position, normal, uv));
     		}
     	}
