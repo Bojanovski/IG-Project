@@ -11,6 +11,7 @@ namespace engine
     {
         vector<string*> coord;
         vector<unsigned int> indeksi;
+        vector<unsigned int> vertexIndices, uvIndices, normalIndices;
 
         ifstream in(path + filename);
         if(!in.is_open())
@@ -152,42 +153,63 @@ namespace engine
             }
             else if ((*coord[i])[0]=='f')
             {
-                unsigned int a, b, c, d;
-                if(coord[i]->find("//")!=string::npos)
+                unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
+                if(coord[i]->find("//")!=std::string::npos)
                 {
-                    sscanf(coord[i]->c_str(),"f %u//%u %u//%u %u//%u",&a,&b,&c,&b,&d,&b);
-                    indeksi.push_back(a);
-                    indeksi.push_back(b);
-                    indeksi.push_back(c);
-                    indeksi.push_back(b);
-                    indeksi.push_back(d);
-                    indeksi.push_back(b);
+                    sscanf(coord[i]->c_str(),"f %d//%d %d//%d %d//%d",&vertexIndex[0], &normalIndex[0], &vertexIndex[1], &normalIndex[1], &vertexIndex[2], &normalIndex[2]);
+                    vertexIndices.push_back(vertexIndex[0]);
+    				vertexIndices.push_back(vertexIndex[1]);
+    				vertexIndices.push_back(vertexIndex[2]);
+    				uvIndices.push_back(0);
+    				uvIndices.push_back(0);
+    				uvIndices.push_back(0);
+    				normalIndices.push_back(normalIndex[0]);
+    				normalIndices.push_back(normalIndex[1]);
+    				normalIndices.push_back(normalIndex[2]);
                 }
-                else if(coord[i]->find("/")!=string::npos)
+                else if(coord[i]->find("/")!=std::string::npos)
                 {
-                    unsigned int t[3];
-                    sscanf(coord[i]->c_str(),"f %u/%u/%u %u/%u/%u %u/%u/%u",&a,&t[0],&b,&c,&t[1],&b,&d,&t[2],&b);
-                    indeksi.push_back(a);
-                    indeksi.push_back(t[0]);
-                    indeksi.push_back(b);
-                    indeksi.push_back(c);
-                    indeksi.push_back(t[1]);
-                    indeksi.push_back(b);
-                    indeksi.push_back(d);
-                    indeksi.push_back(t[2]);
-                    indeksi.push_back(b);
+                    int t[3];
+                    sscanf(coord[i]->c_str(),"f %d/%d/%d %d/%d/%d %d/%d/%d", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+                    vertexIndices.push_back(vertexIndex[0]);
+    				vertexIndices.push_back(vertexIndex[1]);
+    				vertexIndices.push_back(vertexIndex[2]);
+    				uvIndices.push_back(uvIndex[0]);
+    				uvIndices.push_back(uvIndex[1]);
+    				uvIndices.push_back(uvIndex[2]);
+    				normalIndices.push_back(normalIndex[0]);
+    				normalIndices.push_back(normalIndex[1]);
+    				normalIndices.push_back(normalIndex[2]);
                 }
                 else
                 {
-                    sscanf(coord[i]->c_str(),"f %u %u %u",&a,&b,&c);
-                    indeksi.push_back(a);
-                    indeksi.push_back(b);
-                    indeksi.push_back(c);
+                    sscanf(coord[i]->c_str(),"f %d %d %d",&vertexIndex[0], &vertexIndex[1], &vertexIndex[2]);
+                    vertexIndices.push_back(vertexIndex[0]);
+    				vertexIndices.push_back(vertexIndex[1]);
+    				vertexIndices.push_back(vertexIndex[2]);
+    				cout << "NO normlas" << endl;
+    				return false;
                 }
             }
         }
+        
+        for(unsigned int i=0; i<mesh.positions.size(); i++)
+	    {
+    		unsigned int vertexInd = vertexIndices[i];
+    		unsigned int normalsInd = normalIndices[i];
+    		unsigned int uvInd = uvIndices[i];
+    		glm::vec3 vertex = temp_vertices[vertexInd - 1];
+    		glm::vec3 normal = temp_normals[normalsInd - 1];
+    		if(uvInd == 0)
+    		{
+    			//tu bi sad trebalo ici ako je uv nula
+    		} else 
+    		{
+    			glm::vec2 uv = temp_uvs[uvInd - 1];
+    			//ima uv
+    		}
+    	}
 
-        mesh.indices.SetData(indeksi);
         return true;
     }
 
