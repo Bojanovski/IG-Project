@@ -21,3 +21,5 @@ include_directories(
 
 add_subdirectory(Engine)
 add_subdirectory(IRG_project)
+
+file(COPY Resources DESTINATION .) 

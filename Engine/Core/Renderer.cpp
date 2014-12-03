@@ -13,7 +13,7 @@ using namespace glm;
 namespace engine
 {
 	Renderer::Renderer(void)
-        : _2Dprogram("Shaders/sprite"), _3Dprogram("Shaders/DirectionalLight"), _camera(Camera(vec3(4.0f, 3.0f, 3.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f)
+        : _2Dprogram("Shaders/sprite"), _3Dprogram("Shaders/DirectionalLight"), _camera(Camera(vec3(3.0f, 0.5f, -5.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f)
 	{
         EventHandler::AddEventListener(&_camera);
         EventHandler::AddUpdateable(&_camera);
