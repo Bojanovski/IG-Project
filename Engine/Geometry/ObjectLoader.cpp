@@ -198,14 +198,14 @@ namespace engine
     		unsigned int vertexInd = vertexIndices[i];
     		unsigned int normalsInd = normalIndices[i];
     		unsigned int uvInd = uvIndices[i];
-    		glm::vec3 vertex = temp_vertices[vertexInd - 1];
-    		glm::vec3 normal = temp_normals[normalsInd - 1];
+    		glm::vec3 vertex = mesh.positions.[vertexInd - 1];
+    		glm::vec3 normal = mesh.normals[normalsInd - 1];
     		if(uvInd == 0)
     		{
     			//tu bi sad trebalo ici ako je uv nula
     		} else 
     		{
-    			glm::vec2 uv = temp_uvs[uvInd - 1];
+    			glm::vec2 uv = mesh.uvs[uvInd - 1];
     			//ima uv
     		}
     	}
