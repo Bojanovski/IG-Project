@@ -175,7 +175,6 @@ namespace engine
                 }
                 else if(coord[i].find("/")!=std::string::npos)
                 {
-                    int t[3];
                     sscanf(coord[i].c_str(),"f %d/%d/%d %d/%d/%d %d/%d/%d", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
                     vertexIndices.push_back(vertexIndex[0]);
                     vertexIndices.push_back(vertexIndex[1]);
