@@ -7,10 +7,13 @@
 #include <GL/glew.h>
 #include <Engine/Engine.h>
 #include <Engine/Common/ErrorCheck.h>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
 #include "Car.h"
+#include <Engine\Physics\World.h>
 
 using namespace engine;
+using namespace engine_physics;
 using namespace glm;
 using namespace std;
 
@@ -42,6 +45,11 @@ void TestSpeedGaugeLoop()
 	r.SetClearColor(glm::vec3(0.2f, 0.2f, 0.2f));
 	r.SetViewSize(glm::vec2(640, 480)); // Screen size (for proper scaling)
 
+	// physics
+	World phyWorld;
+	EventHandler::AddEventListener(&phyWorld);
+	EventHandler::AddUpdateable(&phyWorld);
+
 	//Speed in km/h
 	float speed = 0.0f; 
 
@@ -60,6 +68,16 @@ void TestSpeedGaugeLoop()
 		
 		// Clear the screen
 		r.Clear();
+
+		static float a = 0.0f;
+		a += 0.001f;
+		vec3 pos (0.0f, a, 0.0f);
+		car.GetPartTransform(CarPart::CAR_BODY) = phyWorld.GetCar().GetTransform();
+		car.GetPartTransform(CarPart::CAR_LF_TIRE) = phyWorld.GetChassis().GetWheelTransform_frontLeft();
+		car.GetPartTransform(CarPart::CAR_RF_TIRE) = phyWorld.GetChassis().GetWheelTransform_frontRight();
+		car.GetPartTransform(CarPart::CAR_LB_TIRE) = phyWorld.GetChassis().GetWheelTransform_backLeft();
+		car.GetPartTransform(CarPart::CAR_RB_TIRE) = phyWorld.GetChassis().GetWheelTransform_backRight();
+		speed = phyWorld.GetCarSpeed();
 
         r.RenderModel(car.GetModel());
 
@@ -140,7 +158,7 @@ void Test2DRendererLoop()
 		// Draw the rest of the arrows
 		r.RenderSprite(&spr3, glm::vec2(0.1f, 0.5f));
 		r.RenderSprite(&spr4, glm::vec2(0.3f, 0.5f), 0, glm::vec2(1.0f, -1.0f)); // Flipped horizontally
-		r.RenderSprite(&spr2, glm::vec2(0.5f, 0.5f), i); // Rotate in the middle of the screen
+		r.RenderSprite(&spr2, glm::vec2(0.5f, 0.5f), (float)i); // Rotate in the middle of the screen
 		r.RenderSprite(&spr5, glm::vec2(0.7f, 0.5f), 45.0f, glm::vec2(1.0f, 2.0f)); // Scaled and at an angle
 		r.RenderSprite(&spr6, glm::vec2(0.9f, 0.5f), 90.0f); // Turned sideways
 

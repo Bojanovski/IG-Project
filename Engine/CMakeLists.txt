@@ -75,12 +75,14 @@ set(Engine_Geometry_HDRS
 )
 
 set(Engine_Physics_SRCS
-    Physics/Car.cpp
+    Physics/CarRigidBody.cpp
+	Physics/ChassisCarController.cpp
     Physics/World.cpp
 )
 
 set(Engine_Physics_HDRS
-    Physics/Car.h
+    Physics/CarRigidBody.h
+	Physics/ChassisCarController.h
     Physics/World.h
 )
 
