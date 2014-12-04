@@ -1,16 +1,20 @@
 #include <Engine/Geometry/ObjectLoader.h>
+#include <Engine/Common/MathFunctions.h>
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <algorithm>
 
 using namespace std;
 using namespace glm;
 
 namespace engine
 {
-    //---------HELPER STUFF---------//
     struct Vertex
     {
+        Vertex(void)
+        {}
+
         Vertex(const vec3 &position, const vec3 &normal, const vec2 &uv)
             : position(position), normal(normal), uv(uv)
         {}
@@ -20,11 +24,43 @@ namespace engine
             return memcmp((const void*)this, (const void*)&other, sizeof(Vertex)) > 0;
         }
 
+        bool operator==(const Vertex &other) const
+        {
+            return Equals(position, other.position) && Equals(normal, other.normal) && Equals(uv, other.uv);
+        }
+
         vec3 position;
         vec3 normal;
         vec2 uv;
     };
 
+    //---------HELPER STUFF---------//
+    static inline void InterpolateNormals(vector<Vertex> &outVertices)
+    {
+         const int n = outVertices.size();
+        vector<pair<Vertex, int> > out(n);
+        for(int i = 0; i < n; i++)
+            out[i] = pair<Vertex, int>(outVertices[i], i);
+        sort(out.begin(), out.end());
+
+        int index = 0;
+        vec3 interpNor = outVertices[out[0].second].normal;
+        for(int i = 1; i < n; i++)
+        {
+            while(i < n && Equals(out[index].first.position, out[i].first.position))
+            {
+                interpNor += outVertices[out[i].second].normal;
+                i++;
+            }
+            interpNor = normalize(interpNor);
+
+            for(int j = index; j < i; j++)
+                outVertices[out[j].second].normal = interpNor;
+
+            interpNor = vec3(0.0f);
+            index = i;
+        }
+    }
 
     static inline bool GetSimilarVertexIndex(const Vertex &packed, map<Vertex, GLuint> &vertexToOutIndex, unsigned int &result)
     {
@@ -68,7 +104,7 @@ namespace engine
 
 
 
-    bool LoadObj(const string &path, const string &filename, Material &mat, TriangleMesh &mesh)
+    bool LoadObj(const string &path, const string &filename, Material &mat, TriangleMesh &mesh, bool indexMesh, bool smoothNormals)
     {
         vector<string> coord;
         //vector<unsigned int> indeksi;
@@ -273,9 +309,19 @@ namespace engine
             outVertices.push_back(Vertex(position, normal, uv));
         }
 
-        //re-index the mesh
-        vector<GLuint> outIndices;
-        IndexMesh(outVertices, outIndices);
+        if(smoothNormals)
+        {
+            //smooth the normals
+            InterpolateNormals(outVertices);
+        }
+
+        if(indexMesh)
+        {
+            //re-index the mesh
+            vector<GLuint> outIndices;
+            IndexMesh(outVertices, outIndices);
+            mesh.indices.SetData(outIndices);
+        }
 
         //fill output mesh
         for(const Vertex &v : outVertices)
@@ -284,7 +330,6 @@ namespace engine
             mesh.normals.push_back(v.normal);
             mesh.uvs.push_back(v.uv);
         }
-        mesh.indices.SetData(outIndices);
 
         return true;
     }

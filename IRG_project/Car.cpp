@@ -20,7 +20,7 @@ void CarModel::LoadModel(const string &path)
         car.meshes.push_back(TriangleMesh());
 
         Material &mat = car.materials[car.materials.size() - 1];
-        LoadObj(path, file, mat, car.meshes[car.meshes.size() - 1]);
+        LoadObj(path, file, mat, car.meshes[car.meshes.size() - 1], true, true);
         mat.diffuse_tex.GenerateMipmaps();
         mat.diffuse_tex.TexParami(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         mat.diffuse_tex.TexParami(GL_TEXTURE_MAG_FILTER, GL_LINEAR);

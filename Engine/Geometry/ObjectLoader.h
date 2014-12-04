@@ -6,7 +6,8 @@
 
 namespace engine
 {
-    bool LoadObj(const std::string &path, const std::string &filename, engine::Material &mat, engine::TriangleMesh &mesh);
+    bool LoadObj(const std::string &path, const std::string &filename, engine::Material &mat, engine::TriangleMesh &mesh,
+        bool indexMesh = true, bool smoothNormals = false);
 }
 
 #endif
