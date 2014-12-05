@@ -12,33 +12,45 @@
 #include "Car.h"
 #include <Engine\Physics\World.h>
 
+#include <Engine/Geometry/Model.h>
+#include <Engine/Geometry/ObjectLoader.h>
+
 using namespace engine;
 using namespace engine_physics;
 using namespace glm;
 using namespace std;
 
-void TestSpeedGaugeLoop()
+void GameLoop()
 {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glDepthFunc(GL_LESS);
 
 	// Load texture
-	Texture tex;
-	tex.LoadFromFile("../Resources/hud.png");
-	tex.GenerateMipmaps();
+	Texture hud;
+	hud.LoadFromFile("../Resources/hud.png");
+	hud.GenerateMipmaps();
 
 	// Sprite definitions
-	Sprite sgbg(tex); // Speed gauge background
+	Sprite sgbg(hud); // Speed gauge background
 	sgbg.SetOffset(glm::vec2(0, 0));
 	sgbg.SetSize(glm::vec2(256, 256));
 
-	Sprite sgn(tex); // Speed gauge needle
+	Sprite sgn(hud); // Speed gauge needle
 	sgn.SetOffset(glm::vec2(256, 0));
 	sgn.SetSize(glm::vec2(256, 256));
 
     CarModel car;
     car.LoadModel("../Resources/CAR/");
+
+	// Test road
+	Model road;
+	road.materials.push_back(Material());
+	road.meshes.push_back(TriangleMesh());
+	Material &mat = road.materials[0];
+	LoadObj("../Resources/Road/", "road_curve.obj", mat, road.meshes[0], true, false);
+	mat.diffuse_tex.GenerateMipmaps();
+	road.LoadToGPU();
 
 	Renderer r;
 	EventHandler::AddEventListener(&r);
@@ -50,22 +62,8 @@ void TestSpeedGaugeLoop()
 	EventHandler::AddEventListener(&phyWorld);
 	EventHandler::AddUpdateable(&phyWorld);
 
-	//Speed in km/h
-	float speed = 0.0f; 
-
-	// Animation parameters
-	float acc = 0.0f;
-
 	do{
-		// Animation
-		if (speed > 120.0f) acc -= 0.01f;
-		if (speed < 40.0f) acc += 0.01f;
-		speed += acc;
 
-		// Limit needle
-		if (speed > 160.0f) speed = 160.0f;
-		if (speed < 0.0f) speed = 0.0f;
-		
 		// Clear the screen
 		r.Clear();
 
@@ -77,9 +75,14 @@ void TestSpeedGaugeLoop()
 		car.GetPartTransform(CarPart::CAR_RF_TIRE) = phyWorld.GetChassis().GetWheelTransform_frontRight();
 		car.GetPartTransform(CarPart::CAR_LB_TIRE) = phyWorld.GetChassis().GetWheelTransform_backLeft();
 		car.GetPartTransform(CarPart::CAR_RB_TIRE) = phyWorld.GetChassis().GetWheelTransform_backRight();
-		speed = phyWorld.GetCarSpeed();
+		float speed = phyWorld.GetCarSpeed();
+
+		// Limit needle
+		if (speed > 160.0f) speed = 160.0f;
+		if (speed < 0.0f) speed = 0.0f;
 
         r.RenderModel(car.GetModel());
+		r.RenderModel(road);
 
 	    // Draw speed gauge
 		r.RenderSprite(&sgbg, glm::vec2(0.15f, 0.850f), 0, glm::vec2(0.50f, 0.50f));
@@ -94,83 +97,10 @@ void TestSpeedGaugeLoop()
 
 	} while (!EventHandler::Quit());
 
-    tex.Destroy();
+    hud.Destroy();
     r.CleanUp();
     car.GetModel().CleanUp();
-}
-
-void Test2DRendererLoop()
-{
-    glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    glDepthFunc(GL_LESS); 
-
-	// Load texture
-	Texture tex;
-	tex.LoadFromFile("../Resources/arrows.png");
-    tex.GenerateMipmaps();
-
-	// Sprite definitions
-	Sprite spr1(tex); // Light arrow
-	spr1.SetOffset(glm::vec2(0, 0));
-	spr1.SetSize(glm::vec2(128, 128));
-
-	Sprite spr2(tex); // Dark arrow
-	spr2.SetOffset(glm::vec2(128, 0));
-	spr2.SetSize(glm::vec2(128, 128));
-
-	Sprite spr3(tex); // Green arrow
-	spr3.SetOffset(glm::vec2(0, 128));
-	spr3.SetSize(glm::vec2(64, 128));
-
-	Sprite spr4(tex); // Orange arrow
-	spr4.SetOffset(glm::vec2(64, 128));
-	spr4.SetSize(glm::vec2(64, 128));
-
-	Sprite spr5(tex); // Yellow arrow
-	spr5.SetOffset(glm::vec2(128, 128));
-	spr5.SetSize(glm::vec2(64, 128));
-
-	Sprite spr6(tex); // Blue arrow
-	spr6.SetOffset(glm::vec2(192, 128));
-	spr6.SetSize(glm::vec2(64, 128));
-
-	// Render init
-	Renderer r;
-    EventHandler::AddEventListener(&r);
-	r.SetClearColor(glm::vec3(0.2f, 0.2f, 0.2f));
-	r.SetViewSize(glm::vec2(800,600)); // Screen size (for proper scaling)
-
-	int i = 0;
-	do{
-		// Spin (framerate based timing, not accurate, for testing only)
-		if (i++ > 360)
-			i = 0;
-
-		r.Clear(); // Clear the screen
-
-		// Draw corner arrows
-		r.RenderSprite(&spr1, glm::vec2(0.1f, 0.1f), 315);
-		r.RenderSprite(&spr1, glm::vec2(0.1f, 0.9f), 225);
-		r.RenderSprite(&spr1, glm::vec2(0.9f, 0.1f),  45);
-		r.RenderSprite(&spr1, glm::vec2(0.9f, 0.9f), 135);
-
-		// Draw the rest of the arrows
-		r.RenderSprite(&spr3, glm::vec2(0.1f, 0.5f));
-		r.RenderSprite(&spr4, glm::vec2(0.3f, 0.5f), 0, glm::vec2(1.0f, -1.0f)); // Flipped horizontally
-		r.RenderSprite(&spr2, glm::vec2(0.5f, 0.5f), (float)i); // Rotate in the middle of the screen
-		r.RenderSprite(&spr5, glm::vec2(0.7f, 0.5f), 45.0f, glm::vec2(1.0f, 2.0f)); // Scaled and at an angle
-		r.RenderSprite(&spr6, glm::vec2(0.9f, 0.5f), 90.0f); // Turned sideways
-
-		// Display
-		SDLHandler::SwapBuffers();
-
-		// Event stuff
-		EventHandler::ProcessPolledEvents();
-		EventHandler::Update();
-
-	} while (!EventHandler::Quit());
-    tex.Destroy();
+	road.CleanUp();
 }
 
 int main(int argc, char *argv[])
@@ -191,7 +121,7 @@ int main(int argc, char *argv[])
     SDLHandler::InitGL();
     SDLHandler::PrintSoftwareVersions();
 
-	TestSpeedGaugeLoop();
+	GameLoop();
 
     SDLHandler::CleanUp();
     return 0;
