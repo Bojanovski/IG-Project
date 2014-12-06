@@ -16,12 +16,14 @@ namespace engine
 	public:
 		Renderer(void);
 
+        void Render();
+        void AddModel(const Model *model);
+
 		// Draw sprite at screen percent position
         void RenderSprite(Sprite* sprite, glm::vec2 position, float angle = 0.0f, glm::vec2 scale = glm::vec2(1.0f));
-        void RenderModel(const Model &model);
 
-		void SetViewSize(glm::vec2 size);
-		glm::vec2 GetViewSize();
+		void SetViewSize(const glm::vec2 &size);
+		const glm::vec2& GetViewSize() const;
 
 		void SetClearColor(glm::vec3 color);
 		void Clear();
@@ -31,6 +33,13 @@ namespace engine
         void CleanUp();
 
 	private:
+        void GenerateCubemap();
+        void RenderModel(const Model *model);
+
+        //models to render
+        //Renderer does not own these
+        std::vector<const Model*> models;
+
 		DefaultCameraHandler _camera;
 
 		// View
@@ -41,6 +50,11 @@ namespace engine
 		GLuint _quad_vbo;
         Program _2Dprogram;
         Program _3Dprogram;
+
+        //skybox stuff
+        GLuint _cube_vao;
+        GLuint _cube_vbo;
+        Texture cubemap;
 	};
 }
 

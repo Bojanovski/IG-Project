@@ -6,14 +6,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
+#include <string>
 
 using namespace glm;
-
+using namespace std;
 
 namespace engine
 {
 	Renderer::Renderer(void)
-        : _2Dprogram("Shaders/sprite"), _3Dprogram("Shaders/DirectionalLight"), _camera(Camera(vec3(3.0f, 0.5f, -5.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f)
+        : _2Dprogram("Shaders/sprite"), _3Dprogram("Shaders/DirectionalLight"), _camera(Camera(vec3(3.0f, 0.5f, -5.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f), cubemap(GL_TEXTURE_CUBE_MAP)
 	{
         EventHandler::AddEventListener(&_camera);
         EventHandler::AddUpdateable(&_camera);
@@ -62,12 +63,12 @@ namespace engine
 		_size = glm::vec2(640,480);
 	}
 
-	void Renderer::SetViewSize(glm::vec2 size)
+	void Renderer::SetViewSize(const vec2 &size)
 	{
 		_size = size;
 	}
 
-	glm::vec2 Renderer::GetViewSize()
+	const vec2& Renderer::GetViewSize() const
 	{
 		return _size;
 	}
@@ -139,7 +140,18 @@ namespace engine
             }
     }
 
-    void Renderer::RenderModel(const Model &model)
+    void Renderer::Render()
+    {
+        for(const Model* model : models)
+            RenderModel(model);
+    }
+
+    void Renderer::AddModel(const Model *model)
+    {
+        models.push_back(model);
+    }
+
+    void Renderer::RenderModel(const Model *model)
     {
         glActiveTexture(GL_TEXTURE1);
         _3Dprogram.Use();
@@ -148,9 +160,9 @@ namespace engine
         const mat4 VP = _camera.cam.GetProjectionMatrix() * V;
 
         int i = 0;
-        for(const TriangleMesh &mesh : model.meshes)
+        for(const TriangleMesh &mesh : model->meshes)
         {
-            const auto &mat = model.materials[i];
+            const auto &mat = model->materials[i];
             mat.diffuse_tex.Bind();
 
             _3Dprogram.SetUniform("MVP", VP * mesh.transform);
@@ -176,5 +188,73 @@ namespace engine
 
         _2Dprogram.Destroy();
         _3Dprogram.Destroy();
+    }
+
+    void Renderer::GenerateCubemap()
+    {
+        static const GLfloat points[] = {
+            -10.0f,  10.0f, -10.0f,
+            -10.0f, -10.0f, -10.0f,
+            10.0f, -10.0f, -10.0f,
+            10.0f, -10.0f, -10.0f,
+            10.0f,  10.0f, -10.0f,
+            -10.0f,  10.0f, -10.0f,
+
+            -10.0f, -10.0f,  10.0f,
+            -10.0f, -10.0f, -10.0f,
+            -10.0f,  10.0f, -10.0f,
+            -10.0f,  10.0f, -10.0f,
+            -10.0f,  10.0f,  10.0f,
+            -10.0f, -10.0f,  10.0f,
+
+            10.0f, -10.0f, -10.0f,
+            10.0f, -10.0f,  10.0f,
+            10.0f,  10.0f,  10.0f,
+            10.0f,  10.0f,  10.0f,
+            10.0f,  10.0f, -10.0f,
+            10.0f, -10.0f, -10.0f,
+
+            -10.0f, -10.0f,  10.0f,
+            -10.0f,  10.0f,  10.0f,
+            10.0f,  10.0f,  10.0f,
+            10.0f,  10.0f,  10.0f,
+            10.0f, -10.0f,  10.0f,
+            -10.0f, -10.0f,  10.0f,
+
+            -10.0f,  10.0f, -10.0f,
+            10.0f,  10.0f, -10.0f,
+            10.0f,  10.0f,  10.0f,
+            10.0f,  10.0f,  10.0f,
+            -10.0f,  10.0f,  10.0f,
+            -10.0f,  10.0f, -10.0f,
+
+            -10.0f, -10.0f, -10.0f,
+            -10.0f, -10.0f,  10.0f,
+            10.0f, -10.0f, -10.0f,
+            10.0f, -10.0f, -10.0f,
+            -10.0f, -10.0f,  10.0f,
+            10.0f, -10.0f,  10.0f
+        };
+
+        glGenBuffers(1, &_cube_vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, _cube_vbo);
+        glBufferData(GL_ARRAY_BUFFER, 3 * 36 * sizeof(GLfloat), &points, GL_STATIC_DRAW);
+
+        glGenVertexArrays(1, &_cube_vao);
+        glBindVertexArray(_cube_vao);
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, _cube_vao);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+        static const string skybox[] = {
+            "skybox_left.jpg",
+            "skybox_right.jpg",
+            "skybox_top.jpg",
+            "skybox_bottom.jpg",
+            "skybox_far.jpg",
+            "skybox_near.jpg"
+        };
+
+        //TODO_JURE: finish
     }
 }

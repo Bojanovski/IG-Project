@@ -8,12 +8,12 @@ namespace engine
     class Texture
     {
     public:
-        Texture(void);
+        Texture(GLenum target = GL_TEXTURE_2D);
         
         bool isAlive() const;
 
         void Bind() const;
-        static void UnBind();
+        void UnBind() const;
 
         void LoadFromFile(const char *filename);
         void LoadDefault();
@@ -31,6 +31,8 @@ namespace engine
 
     private:
         GLuint ID;
+        GLenum target;
+
 		int width;
 		int height;
     };

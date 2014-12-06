@@ -56,8 +56,10 @@ void GameLoop()
 	EventHandler::AddEventListener(&r);
 	r.SetClearColor(glm::vec3(0.2f, 0.2f, 0.2f));
 	r.SetViewSize(glm::vec2(640, 480)); // Screen size (for proper scaling)
+    r.AddModel(&road);
+    r.AddModel(&car.GetModel());
 
-	// physics
+    // physics
 	World phyWorld;
 	EventHandler::AddEventListener(&phyWorld);
 	EventHandler::AddUpdateable(&phyWorld);
@@ -81,8 +83,7 @@ void GameLoop()
 		if (speed > 160.0f) speed = 160.0f;
 		if (speed < 0.0f) speed = 0.0f;
 
-        r.RenderModel(car.GetModel());
-		r.RenderModel(road);
+        r.Render();
 
 	    // Draw speed gauge
 		r.RenderSprite(&sgbg, glm::vec2(0.15f, 0.850f), 0, glm::vec2(0.50f, 0.50f));

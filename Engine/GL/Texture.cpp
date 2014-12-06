@@ -8,8 +8,8 @@ using namespace std;
 
 namespace engine
 {
-    Texture::Texture(void)
-       : ID(0)
+    Texture::Texture(GLenum target)
+       : ID(0), target(target)
     {
     }
 
@@ -49,7 +49,7 @@ namespace engine
 
         GLCheckStmt(glGenTextures(1, &ID));
         GLCheckStmt(Bind());
-        GLCheckStmt(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData()));
+        GLCheckStmt(glTexImage2D(target, 0, GL_RGBA8, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData()));
 
         width = ilGetInteger(IL_IMAGE_WIDTH);
         height = ilGetInteger(IL_IMAGE_HEIGHT);
@@ -67,48 +67,48 @@ namespace engine
 
         GLCheckStmt(glGenTextures(1, &ID));
         GLCheckStmt(Bind());
-        GLCheckStmt(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, white));
+        GLCheckStmt(glTexImage2D(target, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, white));
     }
 
-    void Texture::UnBind()
+    void Texture::UnBind() const
     {
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(target, 0);
     }
 
     void Texture::Bind() const
     {
-        glBindTexture(GL_TEXTURE_2D, ID);
+        glBindTexture(target, ID);
     }
 
     void Texture::GenerateMipmaps() const
     {
-        glGenerateMipmap(GL_TEXTURE_2D);
+        glGenerateMipmap(target);
     }
 
 
     void Texture::TexParami(GLenum paramName, GLuint param) const
     {
-        glTexParameteri(GL_TEXTURE_2D, paramName, param);
+        glTexParameteri(target, paramName, param);
     }
 
     void Texture::TexParamf(GLenum paramName, GLfloat param) const
     {
-        glTexParameterf(GL_TEXTURE_2D, paramName, param);
+        glTexParameterf(target, paramName, param);
     }
 
     void Texture::TexParamIuiv(GLenum paramName, const GLuint *param) const
     {
-        glTexParameterIuiv(GL_TEXTURE_2D, paramName, param);
+        glTexParameterIuiv(target, paramName, param);
     }
 
     void Texture::TexParamIiv(GLenum paramName, const GLint *param) const
     {
-        glTexParameterIiv(GL_TEXTURE_2D, paramName, param);
+        glTexParameterIiv(target, paramName, param);
     }
 
     void Texture::TexParamfv(GLenum paramName, const GLfloat *param) const
     {
-        glTexParameterfv(GL_TEXTURE_2D, paramName, param);
+        glTexParameterfv(target, paramName, param);
     }
 
     void Texture::Destroy()
