@@ -22,82 +22,101 @@ using namespace std;
 
 void GameLoop()
 {
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glDepthFunc(GL_LESS);
-
 	// Load texture
-	Texture hud;
-	hud.LoadFromFile("../Resources/hud.png");
-	hud.GenerateMipmaps();
+		Texture hud;
+		hud.LoadFromFile("../Resources/hud.png");
+		hud.GenerateMipmaps();
 
 	// Sprite definitions
-	Sprite sgbg(hud); // Speed gauge background
-	sgbg.SetOffset(glm::vec2(0, 0));
-	sgbg.SetSize(glm::vec2(256, 256));
+		Sprite sgbg; // Speed gauge background
+		sgbg.SetTexture(hud);
+		sgbg.SetOffset(glm::vec2(0, 0));
+		sgbg.SetSize(glm::vec2(256, 256));
+		sgbg.SetPosition(glm::vec2(0.15f, 0.85f));
+		sgbg.SetScale(glm::vec2(0.50f, 0.50f));
 
-	Sprite sgn(hud); // Speed gauge needle
-	sgn.SetOffset(glm::vec2(256, 0));
-	sgn.SetSize(glm::vec2(256, 256));
+		Sprite sgn; // Speed gauge needle
+		sgn.SetTexture(hud);
+		sgn.SetOffset(glm::vec2(256, 0));
+		sgn.SetSize(glm::vec2(256, 256));
+		sgn.SetPosition(glm::vec2(0.15f, 0.85f));
+		sgn.SetScale(glm::vec2(0.50f, 0.50f));
 
-    CarModel car;
-    car.LoadModel("../Resources/CAR/");
+	// Player car
+		CarModel car;
+		car.LoadModel("../Resources/CAR/");
 
 	// Test road
-	Model road;
-	road.materials.push_back(Material());
-	road.meshes.push_back(TriangleMesh());
-	Material &mat = road.materials[0];
-	LoadObj("../Resources/Road/", "road_curve.obj", mat, road.meshes[0], true, false);
-	mat.diffuse_tex.GenerateMipmaps();
-	road.LoadToGPU();
+		Model road;
+		road.materials.push_back(Material());
+		road.meshes.push_back(TriangleMesh());
+		Material &mat1 = road.materials[0];
+		LoadObj("../Resources/Road/", "road_curve.obj", mat1, road.meshes[0], true, false);
+		mat1.diffuse_tex.GenerateMipmaps();
+		road.LoadToGPU();
 
-	Renderer r;
-	EventHandler::AddEventListener(&r);
-	r.SetClearColor(glm::vec3(0.2f, 0.2f, 0.2f));
-	r.SetViewSize(glm::vec2(640, 480)); // Screen size (for proper scaling)
-    r.AddModel(&road);
-    r.AddModel(&car.GetModel());
+	// Test barrier
+		Model barrier;
+		barrier.materials.push_back(Material());
+		barrier.meshes.push_back(TriangleMesh());
+		Material &mat2 = barrier.materials[0];
+		LoadObj("../Resources/Objects/", "barrier.obj", mat2, barrier.meshes[0], true, false);
+		mat2.diffuse_tex.GenerateMipmaps();
+		barrier.LoadToGPU();
+		barrier.meshes[0].transform = glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(-5.0f, 0.2f, 0.0f)), -45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-    // physics
-	World phyWorld;
-	EventHandler::AddEventListener(&phyWorld);
-	EventHandler::AddUpdateable(&phyWorld);
+	// Init renderer
+		Renderer r;
+		EventHandler::AddEventListener(&r);
+		r.SetClearColor(glm::vec3(0.2f, 0.2f, 0.2f));
+		r.SetViewSize(glm::vec2(640, 480)); // Screen size (for proper sprite scaling)
 
+	// Add objects
+		r.AddSprite(&sgbg);
+		r.AddSprite(&sgn);
+
+		r.AddModel(&car.GetModel());
+		r.AddModel(&road);
+		r.AddModel(&barrier);
+    
+    // Physics
+		World phyWorld;
+		EventHandler::AddEventListener(&phyWorld);
+		EventHandler::AddUpdateable(&phyWorld);
+
+	// Game loop
 	do{
 
 		// Clear the screen
-		r.Clear();
+			r.Clear();
 
-		static float a = 0.0f;
-		a += 0.001f;
-		vec3 pos (0.0f, a, 0.0f);
-		car.GetPartTransform(CarPart::CAR_BODY) = phyWorld.GetCar().GetTransform();
-		car.GetPartTransform(CarPart::CAR_LF_TIRE) = phyWorld.GetChassis().GetWheelTransform_frontLeft();
-		car.GetPartTransform(CarPart::CAR_RF_TIRE) = phyWorld.GetChassis().GetWheelTransform_frontRight();
-		car.GetPartTransform(CarPart::CAR_LB_TIRE) = phyWorld.GetChassis().GetWheelTransform_backLeft();
-		car.GetPartTransform(CarPart::CAR_RB_TIRE) = phyWorld.GetChassis().GetWheelTransform_backRight();
-		float speed = phyWorld.GetCarSpeed();
+		// Physics
+			static float a = 0.0f;
+			a += 0.001f;
+			vec3 pos (0.0f, a, 0.0f);
+			car.GetPartTransform(CarPart::CAR_BODY) = phyWorld.GetCar().GetTransform();
+			car.GetPartTransform(CarPart::CAR_LF_TIRE) = phyWorld.GetChassis().GetWheelTransform_frontLeft();
+			car.GetPartTransform(CarPart::CAR_RF_TIRE) = phyWorld.GetChassis().GetWheelTransform_frontRight();
+			car.GetPartTransform(CarPart::CAR_LB_TIRE) = phyWorld.GetChassis().GetWheelTransform_backLeft();
+			car.GetPartTransform(CarPart::CAR_RB_TIRE) = phyWorld.GetChassis().GetWheelTransform_backRight();
+			float speed = phyWorld.GetCarSpeed();
 
-		// Limit needle
-		if (speed > 160.0f) speed = 160.0f;
-		if (speed < 0.0f) speed = 0.0f;
-
-        r.Render();
-
-	    // Draw speed gauge
-		r.RenderSprite(&sgbg, glm::vec2(0.15f, 0.850f), 0, glm::vec2(0.50f, 0.50f));
-		r.RenderSprite(&sgn, glm::vec2(0.15f, 0.85f), -120.0f + 240.0f*speed / 160.0f, glm::vec2(0.50f, 0.50f));
-
+		// Set speed gauge needle
+			if (speed > 160.0f) speed = 160.0f;
+			if (speed < 0.0f) speed = 0.0f;
+			sgn.SetAngle(-120.0f + 240.0f*speed / 160.0f);
+		
 		// Display
-		SDLHandler::SwapBuffers();
+			r.Render();
+			SDLHandler::SwapBuffers();
 
-		// Event stuff
-		EventHandler::ProcessPolledEvents();
-		EventHandler::Update();
+		// Handle events
+			EventHandler::ProcessPolledEvents();
+			EventHandler::Update();
 
 	} while (!EventHandler::Quit());
 
+	// Cleaning up
     hud.Destroy();
     r.CleanUp();
     car.GetModel().CleanUp();

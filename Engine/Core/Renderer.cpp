@@ -30,6 +30,7 @@ namespace engine
 		// Setup opengl state
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
+		glEnable(GL_CULL_FACE);
 		glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 
 		// Vertex array object
@@ -63,33 +64,38 @@ namespace engine
 		_size = glm::vec2(640,480);
 	}
 
-	void Renderer::SetViewSize(const vec2 &size)
+	void Renderer::AddSprite(const Sprite *sprite)
 	{
-		_size = size;
+		sprites.push_back(sprite);
 	}
 
-	const vec2& Renderer::GetViewSize() const
+	void Renderer::AddModel(const Model *model)
 	{
-		return _size;
+		models.push_back(model);
 	}
 
-	void Renderer::SetClearColor(glm::vec3 color)
+	void Renderer::Render()
 	{
-		glClearColor(color.x, color.y, color.z, 1.0f);
+		for (const Model* model : models)
+			RenderModel(model);
+
+		for (const Sprite* sprite : sprites)
+			RenderSprite(sprite);
 	}
 
-	void Renderer::RenderSprite(Sprite* sprite, glm::vec2 position, float angle, glm::vec2 scale)
+	void Renderer::RenderSprite(const Sprite* sprite)
 	{
-        glActiveTexture(GL_TEXTURE0);
-
-		// Calculate position (Origin is top left corner)
-		position.x = 2.0f * position.x - 1.0f;
-		position.y = -2.0f * position.y + 1.0f;
-
 		// Get sprite data
 		glm::vec2 spr_size = sprite->GetSize();
 		glm::vec2 spr_offset = sprite->GetOffset();
 		glm::vec2 tex_size = glm::vec2(sprite->GetTexture()->GetWidth(), sprite->GetTexture()->GetHeight());
+		glm::vec2 position = sprite->GetPosition();
+		glm::vec2 scale = sprite->GetScale();
+		float angle = sprite->GetAngle();
+
+		// Calculate position (Origin is top left corner)
+		position.x = 2.0f * position.x - 1.0f;
+		position.y = -2.0f * position.y + 1.0f;
 
 		// Transform matrix
 		glm::mat4 T = glm::mat4(1.0f); // Watch out! Reverse matrix order :)
@@ -98,7 +104,7 @@ namespace engine
 		T = glm::rotate(T, angle, glm::vec3(0.0f, 0.0f, -1.0f)); // Rotate
 		T = glm::scale(T, glm::vec3(spr_size * scale, 1.0f)); // Scale
 		T = glm::translate(T, glm::vec3(-0.5f, 0.5f, 0.0f)); // First move to the center
-		
+
 		// Disable depth and enable alpha blending
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
@@ -111,12 +117,13 @@ namespace engine
 		// Ready shader
 		_2Dprogram.Use();
 		_2Dprogram.SetUniform("T", T);
-		_2Dprogram.SetUniform("offset", spr_offset/spr_size); // Offset of the sprite image on texture
-		_2Dprogram.SetUniform("size", spr_size/tex_size); // Size of the sprite image on texture
+		_2Dprogram.SetUniform("offset", spr_offset / spr_size); // Offset of the sprite image on texture
+		_2Dprogram.SetUniform("size", spr_size / tex_size); // Size of the sprite image on texture
 
 		// Ready texture
+		glActiveTexture(GL_TEXTURE0);
 		sprite->GetTexture()->Bind();
-		
+
 		// Draw!
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -124,32 +131,6 @@ namespace engine
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 	}
-
-	void Renderer::Clear()
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-
-    void Renderer::HandleEvent(const SDL_Event &e)
-    {
-        if(e.type == SDL_WINDOWEVENT)
-            if(e.window.event == SDL_WINDOWEVENT_RESIZED)
-            {
-                glViewport(0, 0, e.window.data1, e.window.data2);
-                //SetViewSize(glm::vec2(e.window.data1, e.window.data2));
-            }
-    }
-
-    void Renderer::Render()
-    {
-        for(const Model* model : models)
-            RenderModel(model);
-    }
-
-    void Renderer::AddModel(const Model *model)
-    {
-        models.push_back(model);
-    }
 
     void Renderer::RenderModel(const Model *model)
     {
@@ -180,6 +161,36 @@ namespace engine
             ++i;
         }
     }
+
+	void Renderer::SetViewSize(const vec2 &size)
+	{
+		_size = size;
+	}
+
+	const vec2& Renderer::GetViewSize() const
+	{
+		return _size;
+	}
+
+	void Renderer::SetClearColor(glm::vec3 color)
+	{
+		glClearColor(color.x, color.y, color.z, 1.0f);
+	}
+
+	void Renderer::Clear()
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	void Renderer::HandleEvent(const SDL_Event &e)
+	{
+		if (e.type == SDL_WINDOWEVENT)
+			if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+			{
+				glViewport(0, 0, e.window.data1, e.window.data2);
+				//SetViewSize(glm::vec2(e.window.data1, e.window.data2));
+			}
+	}
 
     void Renderer::CleanUp()
     {

@@ -16,15 +16,14 @@ namespace engine
 	public:
 		Renderer(void);
 
-        void Render();
-        void AddModel(const Model *model);
-
-		// Draw sprite at screen percent position
-        void RenderSprite(Sprite* sprite, glm::vec2 position, float angle = 0.0f, glm::vec2 scale = glm::vec2(1.0f));
-
-		void SetViewSize(const glm::vec2 &size);
+		void AddSprite(const Sprite* sprite);
+        void AddModel(const Model* model);
+		
+		void Render();
+		
 		const glm::vec2& GetViewSize() const;
-
+		void SetViewSize(const glm::vec2 &size);
+		
 		void SetClearColor(glm::vec3 color);
 		void Clear();
 
@@ -34,16 +33,21 @@ namespace engine
 
 	private:
         void GenerateCubemap();
-        void RenderModel(const Model *model);
+		void RenderSprite(const Sprite* sprite);
+        void RenderModel(const Model* model);
 
-        //models to render
+        //sprites to render
         //Renderer does not own these
-        std::vector<const Model*> models;
+        std::vector<const Sprite*> sprites;
 
-		DefaultCameraHandler _camera;
+		//models to render
+		//Renderer does not own these
+		std::vector<const Model*> models;
 
 		// View
 		glm::vec2 _size;
+
+		DefaultCameraHandler _camera;
 
 		// Sprite rendering stuff
 		GLuint _quad_vao;
