@@ -31,6 +31,8 @@ namespace engine
 
         void CleanUp();
 
+		DefaultCameraHandler* getCameraHandler() { return &_camera; }
+
 	private:
         void GenerateCubemap();
 		void RenderSprite(const Sprite* sprite);

@@ -19,6 +19,8 @@ namespace engine_physics
 		const ChassisCarController &GetChassis() { return mChassis; }
 
 		float GetCarSpeed() { return mCarSpeed; }
+		float getSpeedLimit() { return mCarSpeedLimit; }
+		glm::vec3 getCarPosition() { return mChassis.mPos; }
 
 	private:
 		void Update(float dt);

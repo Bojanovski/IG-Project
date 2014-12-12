@@ -15,10 +15,14 @@
 #include <Engine/Geometry/Model.h>
 #include <Engine/Geometry/ObjectLoader.h>
 
+#include <irrKlang.h>
+
 using namespace engine;
 using namespace engine_physics;
 using namespace glm;
 using namespace std;
+
+#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 
 void GameLoop()
 {
@@ -84,6 +88,21 @@ void GameLoop()
 		EventHandler::AddEventListener(&phyWorld);
 		EventHandler::AddUpdateable(&phyWorld);
 
+	// Sounds
+		// start the sound engine with default parameters
+		irrklang::ISoundEngine* soundEngine = irrklang::createIrrKlangDevice();
+		if (!soundEngine)
+			return; // error starting up the engine
+
+		soundEngine->setListenerPosition(irrklang::vec3df(0, 0, 0), irrklang::vec3df(0, 0, 1));
+		/*irrklang::ISound* music = engine->play3D("The_Violation.mp3",
+			irrklang::vec3df(0.f, 0.f, 0.f), true, false, true);*/
+		irrklang::ISound* zvukMotora = soundEngine->play3D("stoji.ogg", 
+			irrklang::vec3df(0.f, 0.f, 0.f), true, false, true);
+		
+		float brzinaSada = 0.f, brzinaPrije = 0.f, speedLimit = 0.f;
+		DefaultCameraHandler* camera = r.getCameraHandler();
+
 	// Game loop
 	do{
 
@@ -114,6 +133,25 @@ void GameLoop()
 			EventHandler::ProcessPolledEvents();
 			EventHandler::Update();
 
+		// Update listener position and orientation
+			vec3 listenerPositionVec3 = (*camera).cam.position;
+			irrklang::vec3df listenerPositionVec3df(listenerPositionVec3.x, listenerPositionVec3.y, listenerPositionVec3.z);
+			vec3 listenerDirectionVec3 = (*camera).cam.GetDirection();
+			irrklang::vec3df listenerDirectionVec3df(listenerDirectionVec3.x, listenerDirectionVec3.y, 	listenerDirectionVec3.z);
+			vec3 listenerUpVec3 = (*camera).cam.GetUp();
+			irrklang::vec3df listenerUpVec3df(-listenerUpVec3.x, -listenerUpVec3.y, -listenerUpVec3.z);
+			soundEngine->setListenerPosition(listenerPositionVec3df, listenerDirectionVec3df, irrklang::vec3df(0, 0, 0), listenerUpVec3df);
+
+		// Adjust engine sound
+			speedLimit = phyWorld.getSpeedLimit();
+			brzinaSada = speed;
+			zvukMotora->setPlaybackSpeed(brzinaSada / speedLimit + 1);
+
+		// Set position of engine sound
+			vec3 carPosition = phyWorld.getCarPosition();
+			irrklang::vec3df carPositionVec3df(carPosition.x, carPosition.y, carPosition.z);
+			zvukMotora->setPosition(carPositionVec3df);
+
 	} while (!EventHandler::Quit());
 
 	// Cleaning up
@@ -121,6 +159,9 @@ void GameLoop()
     r.CleanUp();
     car.GetModel().CleanUp();
 	road.CleanUp();
+	//if (music)
+		//music->drop(); // release music stream.
+	soundEngine->drop(); // delete engine
 }
 
 int main(int argc, char *argv[])
