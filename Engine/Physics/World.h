@@ -21,6 +21,7 @@ namespace engine_physics
 		float GetCarSpeed() { return mCarSpeed; }
 		float getSpeedLimit() { return mCarSpeedLimit; }
 		glm::vec3 getCarPosition() { return mChassis.mPos; }
+		bool isTurning() { return mGoRight || mGoLeft; }
 
 	private:
 		void Update(float dt);

@@ -95,10 +95,16 @@ void GameLoop()
 			return; // error starting up the engine
 
 		soundEngine->setListenerPosition(irrklang::vec3df(0, 0, 0), irrklang::vec3df(0, 0, 1));
-		/*irrklang::ISound* music = engine->play3D("The_Violation.mp3",
-			irrklang::vec3df(0.f, 0.f, 0.f), true, false, true);*/
-		irrklang::ISound* zvukMotora = soundEngine->play3D("stoji.ogg", 
+		irrklang::ISound* zvukMotora = soundEngine->play3D("../Resources/Sounds/zvukMotora.ogg",
 			irrklang::vec3df(0.f, 0.f, 0.f), true, false, true);
+		irrklang::ISound* skripanje = soundEngine->play3D("../Resources/Sounds/skripanje.ogg",
+			irrklang::vec3df(0, 0, 0), true, true, true);
+		irrklang::ISoundSource* zavrsetakSkripanja = soundEngine->addSoundSourceFromFile("../Resources/Sounds/zavrsetakSkripanja.ogg");
+		if (!(zvukMotora && skripanje && zavrsetakSkripanja))
+			return; // error loading sounds
+		bool skripiOdPrije = false;
+		skripanje->setMinDistance(2);
+		zavrsetakSkripanja->setDefaultMinDistance(2);
 		
 		float brzinaSada = 0.f, brzinaPrije = 0.f, speedLimit = 0.f;
 		DefaultCameraHandler* camera = r.getCameraHandler();
@@ -151,6 +157,21 @@ void GameLoop()
 			vec3 carPosition = phyWorld.getCarPosition();
 			irrklang::vec3df carPositionVec3df(carPosition.x, carPosition.y, carPosition.z);
 			zvukMotora->setPosition(carPositionVec3df);
+
+		// Set screeching tires
+			skripanje->setPosition(carPositionVec3df);
+			if (phyWorld.isTurning() && (speed/20 > 0.76)) {
+				if (!skripiOdPrije) {
+					skripanje->setIsPaused(false);
+					skripiOdPrije = true;
+				}
+			}
+			else if (skripiOdPrije) {
+				skripanje->setPlayPosition(0);
+				skripanje->setIsPaused(true);
+				soundEngine->play3D(zavrsetakSkripanja, carPositionVec3df);
+				skripiOdPrije = false;
+			}
 
 	} while (!EventHandler::Quit());
 
