@@ -20,4 +20,5 @@ target_link_libraries(IRG_project
     ${SDL2_LIBRARY}
     ${GLEW_LIBRARY}
     ${OPENGL_LIBRARIES}
+    ${IRRKLANG_LIBRARIES}
 )

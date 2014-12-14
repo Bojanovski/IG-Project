@@ -10,11 +10,13 @@ find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(DevIL REQUIRED)
+find_package(IrrKlang REQUIRED)
 
 include_directories(
     ${SDL2_INCLUDE_DIR} 
     ${GLEW_INCLUDE_PATH}
     ${OPENGL_INCLUDE_DIRS}
+    ${IRRKLANG_INCLUDE_DIRS}
     "${IL_INCLUDE_DIR}/.."
     "${PROJECT_SOURCE_DIR}"
 )
