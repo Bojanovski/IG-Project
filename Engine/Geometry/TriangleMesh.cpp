@@ -87,6 +87,12 @@ namespace engine
         glDrawElements(GL_TRIANGLES, indices.Size(), indices.GetIndexDataType(), nullptr);
     }
 
+    void TriangleMesh::DrawInstanced(GLsizei count) const
+    {
+        glBindVertexArray(VAO);
+        glDrawElementsInstanced(GL_TRIANGLES, indices.Size(), indices.GetIndexDataType(), 0, count);
+    }
+
     void TriangleMesh::CleanUp()
     {
         glDeleteBuffers(1, &VBO);
@@ -94,4 +100,44 @@ namespace engine
         glDeleteVertexArrays(1, &VAO);
     }
 
+    float TriangleMesh::GetWidth() const
+    {
+        float maxx = -FLT_MAX;
+        float minx = FLT_MAX;
+        for(const vec3 &p : positions)
+        {
+            maxx = max(maxx, p.x);
+            minx = min(minx, p.x);
+        }
+        return maxx - minx;
+    }
+
+    float TriangleMesh::GetHeight() const
+    {
+        float maxy = -FLT_MAX;
+        float miny = FLT_MAX;
+        for(const vec3 &p : positions)
+        {
+            maxy = max(maxy, p.x);
+            miny = min(miny, p.x);
+        }
+        return maxy - miny;
+    }
+
+    float TriangleMesh::GetDepth() const
+    {
+        float maxz = -FLT_MAX;
+        float minz = FLT_MAX;
+        for(const vec3 &p : positions)
+        {
+            maxz = max(maxz, p.x);
+            minz = min(minz, p.x);
+        }
+        return maxz - minz;
+    }
+
+    float TriangleMesh::GetMaxDim() const
+    {
+        return max(max(GetWidth(), GetHeight()), GetDepth());
+    }
 }

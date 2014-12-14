@@ -14,7 +14,8 @@ using namespace std;
 namespace engine
 {
 	Renderer::Renderer(void)
-        : _2Dprogram("Shaders/sprite"), _3Dprogram("Shaders/DirectionalLight"), _camera(Camera(vec3(3.0f, 0.5f, -5.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f), cubemap(GL_TEXTURE_CUBE_MAP)
+        : _2Dprogram("Shaders/sprite"), _3Dprogram("Shaders/DirectionalLight"), _3DprogramInstanced(VertexShader("Shaders/DirectionalLightInstanced"), FragmentShader("Shaders/DirectionalLight")),
+        _camera(Camera(vec3(3.0f, 0.5f, -5.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f), cubemap(GL_TEXTURE_CUBE_MAP)
 	{
         EventHandler::AddEventListener(&_camera);
         EventHandler::AddUpdateable(&_camera);
@@ -56,6 +57,11 @@ namespace engine
         _3Dprogram.SetUniform("lightIntensity", vec3(1.0f, 1.0f, 1.0f));
         _3Dprogram.SetUniform("textureSampler", 1);
 
+        _3DprogramInstanced.Use();
+        _3DprogramInstanced.SetUniform("lightDirection", normalize(vec3(0.0f, 1.0f, -1.0f)));
+        _3DprogramInstanced.SetUniform("lightIntensity", vec3(1.0f, 1.0f, 1.0f));
+        _3DprogramInstanced.SetUniform("textureSampler", 1);
+
 		// Load 2d shader
 		_2Dprogram.Use();
 		_2Dprogram.SetUniform("color_map", 0);
@@ -74,10 +80,18 @@ namespace engine
 		models.push_back(model);
 	}
 
+    void Renderer::AddInstancedModel(const InstancedModel* model)
+    {
+        instancedModels.push_back(model);
+    }
+
 	void Renderer::Render()
 	{
 		for (const Model* model : models)
 			RenderModel(model);
+
+        for (const InstancedModel* model : instancedModels)
+            RenderInstancedModel(model);
 
 		for (const Sprite* sprite : sprites)
 			RenderSprite(sprite);
@@ -162,6 +176,34 @@ namespace engine
         }
     }
 
+    void Renderer::RenderInstancedModel(const InstancedModel* model)
+    {
+        glActiveTexture(GL_TEXTURE1);
+        _3DprogramInstanced.Use();
+
+        const mat4 V = _camera.cam.GetViewMatrix();
+        const mat4 VP = _camera.cam.GetProjectionMatrix() * V;
+
+        int i = 0;
+        for(const TriangleMesh &mesh : model->meshes)
+        {
+            const auto &mat = model->materials[i];
+            mat.diffuse_tex.Bind();
+
+            _3DprogramInstanced.SetUniform("MVP", VP * mesh.transform);
+            _3DprogramInstanced.SetUniform("invV", inverse(V));
+
+            _3DprogramInstanced.SetUniform("ambient", vec3(mat.ambientColor));
+            _3DprogramInstanced.SetUniform("diffuse", vec3(mat.diffuseColor));
+            _3DprogramInstanced.SetUniform("specular", vec3(mat.specularColor));
+            _3DprogramInstanced.SetUniform("shininess", mat.shininess);
+
+            mesh.DrawInstanced(model->transforms.size());
+
+            ++i;
+        }
+    }
+
 	void Renderer::SetViewSize(const vec2 &size)
 	{
 		_size = size;
@@ -199,6 +241,7 @@ namespace engine
 
         _2Dprogram.Destroy();
         _3Dprogram.Destroy();
+        _3DprogramInstanced.Destroy();
     }
 
     void Renderer::GenerateCubemap()

@@ -62,6 +62,12 @@ namespace engine
         case SDLK_e:
             dir += vec3(0, mod, 0);
             break;
+        case SDLK_9:
+            speed *= 2.0f;
+            break;
+        case SDLK_0:
+            speed *= 0.5f;
+            break;
         default:
             break;
         }

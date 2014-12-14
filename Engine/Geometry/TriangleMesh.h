@@ -11,6 +11,7 @@ namespace engine
 {
 	class TriangleMesh
 	{
+        friend class InstancedModel;
 	public:
 		TriangleMesh(void);
 
@@ -28,7 +29,14 @@ namespace engine
         //draw the mesh with the currently bound program
         //the program must be bound beforehand
         void Draw() const;
+        void DrawInstanced(GLsizei count) const;
         void CleanUp();
+
+        float GetWidth() const; //x
+        float GetHeight() const; //y
+        float GetDepth() const; //z
+
+        float GetMaxDim() const;
 
         std::vector<glm::vec3> positions;
         std::vector<glm::vec3> normals;

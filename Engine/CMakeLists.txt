@@ -62,6 +62,7 @@ set(Engine_Geometry_SRCS
     Geometry/ObjectLoader.cpp
     Geometry/TriangleMesh.cpp
     Geometry/Model.cpp
+    Geometry/InstancedModel.cpp
     Geometry/IndexContainer.cpp
     Geometry/Material.cpp
 )
@@ -70,6 +71,7 @@ set(Engine_Geometry_HDRS
     Geometry/ObjectLoader.h
     Geometry/TriangleMesh.h
     Geometry/Model.h
+    Geometry/InstancedModel.h
     Geometry/IndexContainer.h
     Geometry/Material.h
 )

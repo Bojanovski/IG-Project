@@ -37,7 +37,7 @@ namespace engine
 
     mat4 Camera::GetProjectionMatrix() const
     {
-        return perspective(FoV, aspectRatio, 0.1f, 100.0f);
+        return perspective(FoV, aspectRatio, 0.1f, 1000.0f);
     }
 
     mat4 Camera::GetViewMatrix() const

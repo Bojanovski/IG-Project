@@ -4,11 +4,13 @@ project(IRG_project)
 set(IRG_project_SRCS
     Main.cpp
     Car.cpp
+    RacingTrack.cpp
 )
 
 # Define the header files.
 set(IRG_project_HDRS
     Car.h
+    RacingTrack.h
 )
 
 file(COPY Shaders DESTINATION .)

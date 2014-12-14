@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <Engine/Core/Camera.h>
 #include <Engine/Core/DefaultCameraHandler.h>
-#include <Engine/Geometry/Model.h>
+#include <Engine/Geometry/InstancedModel.h>
 #include <Engine/GL/Program.h>
 #include <Engine/Core/Sprite.h>
 
@@ -18,6 +18,7 @@ namespace engine
 
 		void AddSprite(const Sprite* sprite);
         void AddModel(const Model* model);
+        void AddInstancedModel(const InstancedModel* model);
 		
 		void Render();
 		
@@ -37,6 +38,7 @@ namespace engine
         void GenerateCubemap();
 		void RenderSprite(const Sprite* sprite);
         void RenderModel(const Model* model);
+        void RenderInstancedModel(const InstancedModel* model);
 
         //sprites to render
         //Renderer does not own these
@@ -45,6 +47,9 @@ namespace engine
 		//models to render
 		//Renderer does not own these
 		std::vector<const Model*> models;
+        Program _3Dprogram;
+        std::vector<const InstancedModel*> instancedModels;
+        Program _3DprogramInstanced;
 
 		// View
 		glm::vec2 _size;
@@ -55,7 +60,6 @@ namespace engine
 		GLuint _quad_vao;
 		GLuint _quad_vbo;
         Program _2Dprogram;
-        Program _3Dprogram;
 
         //skybox stuff
         GLuint _cube_vao;

@@ -10,9 +10,10 @@
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
 #include "Car.h"
+#include "RacingTrack.h"
 #include <Engine\Physics\World.h>
 
-#include <Engine/Geometry/Model.h>
+#include "RacingTrack.h"
 #include <Engine/Geometry/ObjectLoader.h>
 
 #include <irrKlang.h>
@@ -50,24 +51,11 @@ void GameLoop()
 		CarModel car;
 		car.LoadModel("../Resources/CAR/");
 
-	// Test road
-		Model road;
-		road.materials.push_back(Material());
-		road.meshes.push_back(TriangleMesh());
-		Material &mat1 = road.materials[0];
-		LoadObj("../Resources/Road/", "road_curve.obj", mat1, road.meshes[0], true, false);
-		mat1.diffuse_tex.GenerateMipmaps();
-		road.LoadToGPU();
-
-	// Test barrier
-		Model barrier;
-		barrier.materials.push_back(Material());
-		barrier.meshes.push_back(TriangleMesh());
-		Material &mat2 = barrier.materials[0];
-		LoadObj("../Resources/Objects/", "barrier.obj", mat2, barrier.meshes[0], true, false);
-		mat2.diffuse_tex.GenerateMipmaps();
-		barrier.LoadToGPU();
-		barrier.meshes[0].transform = glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(-5.0f, 0.2f, 0.0f)), -45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+    // Init racing track
+        RacingTrack rt;
+        rt.LoadModels("../Resources/Road/", "road_str.obj", "road_curve.obj", "barrier.obj");
+        rt.Create(RacingTrackDescription("../Resources/TrackDescription.txt"));
+        rt.LoadToGPU();
 
 	// Init renderer
 		Renderer r;
@@ -80,9 +68,10 @@ void GameLoop()
 		r.AddSprite(&sgn);
 
 		r.AddModel(&car.GetModel());
-		r.AddModel(&road);
-		r.AddModel(&barrier);
-    
+		r.AddInstancedModel(rt.GetRoadBlock());
+		r.AddInstancedModel(rt.GetStraightRoad());
+        r.AddInstancedModel(rt.GetTurnRoad());
+
     // Physics
 		World phyWorld;
 		EventHandler::AddEventListener(&phyWorld);
@@ -179,7 +168,7 @@ void GameLoop()
     hud.Destroy();
     r.CleanUp();
     car.GetModel().CleanUp();
-	road.CleanUp();
+	rt.CleanUp();
 	//if (music)
 		//music->drop(); // release music stream.
 	soundEngine->drop(); // delete engine
@@ -193,8 +182,8 @@ int main(int argc, char *argv[])
         "Test",                    // window title
         SDL_WINDOWPOS_UNDEFINED,   // initial x position
         SDL_WINDOWPOS_UNDEFINED,   // initial y position
-        640,                       // width, in pixels
-        480,                       // height, in pixels
+        1280,                       // width, in pixels
+        720,                       // height, in pixels
         SDL_WINDOW_OPENGL |        // flags
         SDL_WINDOW_RESIZABLE |
         SDL_WINDOW_SHOWN           

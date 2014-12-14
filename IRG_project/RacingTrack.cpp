@@ -1,0 +1,166 @@
+#include "RacingTrack.h"
+#include <iostream>
+#include <fstream>
+#include <glm/gtc/matrix_transform.hpp>
+#include <Engine/Geometry/ObjectLoader.h>
+
+using namespace engine;
+using namespace std;
+using namespace glm;
+
+RacingTrackDescription::RacingTrackDescription(const string &filename)
+{
+    ifstream in(filename);
+    if(!in)
+    {
+        cerr << "Error opening file: " << filename << endl;
+        exit(-1);
+    }
+
+    in >> n;
+    in >> m;
+
+    //padding
+    n += 2;
+    m += 2;
+    track = new char[n * m];
+    memset(track, '.', n * m);
+
+    for(int i = 1; i < n - 1; ++i)
+    {
+        string line;
+        in >> line;
+        memcpy((*this)[i]+1, line.c_str(), line.size());
+    }
+}
+
+RacingTrackDescription::RacingTrackDescription(const RacingTrackDescription &other)
+{
+    throw exception("RacingTrackDescription can not be copied.");
+}
+
+RacingTrackDescription::~RacingTrackDescription(void)
+{
+    delete[] track;
+}
+
+char* RacingTrackDescription::operator[](int k)
+{
+    return track+(m*k);
+}
+
+RacingTrackDescription& RacingTrackDescription::operator=(const RacingTrackDescription &other)
+{
+    throw exception("RacingTrackDescription can not be copied.");
+}
+
+int RacingTrackDescription::Width() const
+{
+    return m;
+}
+
+int RacingTrackDescription::Height() const
+{
+    return n;
+}
+
+
+RacingTrack::RacingTrack(void)
+{
+    const mat4 I(1.0f);
+    const vec3 j(0.0f, 1.0f, 0.0f);
+    rotations[0] = rotate(I, 0.0f, j);
+    rotations[1] = rotate(I, 90.0f, j);
+    rotations[2] = rotate(I, 180.0f, j);
+    rotations[3] = rotate(I, 270.0f, j);
+}
+
+void RacingTrack::LoadModels(const string &path, const string &straightfn, const string &turnfn, const string &roadBlockfn)
+{
+    straightRoad.materials.push_back(Material());
+    straightRoad.meshes.push_back(TriangleMesh());
+    Material &mat1 = straightRoad.materials[0];
+    LoadObj(path, straightfn, mat1, straightRoad.meshes[0], true, false);
+    mat1.diffuse_tex.GenerateMipmaps();
+    mat1.diffuse_tex.TexParamf(GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+
+    turnRoad.materials.push_back(Material());
+    turnRoad.meshes.push_back(TriangleMesh());
+    Material &mat2 = turnRoad.materials[0];
+    LoadObj(path, turnfn, mat2, turnRoad.meshes[0], true, false);
+    mat2.diffuse_tex.GenerateMipmaps();
+    mat2.diffuse_tex.TexParamf(GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+
+    roadBlock.materials.push_back(Material());
+    roadBlock.meshes.push_back(TriangleMesh());
+    Material &mat3 = roadBlock.materials[0];
+    LoadObj(path, roadBlockfn, mat3, roadBlock.meshes[0], true, false);
+    mat3.diffuse_tex.GenerateMipmaps();
+    mat3.diffuse_tex.TexParamf(GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+
+    roadTileDim = straightRoad.meshes[0].GetMaxDim();
+}
+
+
+void RacingTrack::LoadToGPU()
+{
+    straightRoad.LoadToGPU();
+    roadBlock.LoadToGPU();
+    turnRoad.LoadToGPU();
+}
+
+
+void RacingTrack::Create(RacingTrackDescription &rtd)
+{
+    const mat4 centering = translate(mat4(1.0f), vec3((float)rtd.Height(), 0.0f, (float)rtd.Width()) * roadTileDim * -0.5f);
+
+    const int n = rtd.Height() - 1;
+    const int m = rtd.Width() - 1;
+    for(int i = 1; i < n; ++i)
+    {
+        for(int j = 1; j < m; ++j)
+        {
+            //printf("%c", rtd[i][j]);
+            if(rtd[i][j] == 'R')
+            {
+                mat4 T = translate(mat4(1.0f), vec3((float)i * roadTileDim, 0.0f, (float)j * roadTileDim));
+
+                if(rtd[i+1][j] == 'R' && rtd[i][j+1] == 'R')
+                    turnRoad.transforms.push_back(centering * T * rotations[2]);
+                else if(rtd[i+1][j] == 'R' && rtd[i][j-1] == 'R')
+                    turnRoad.transforms.push_back(centering * T * rotations[3]);
+                else if(rtd[i-1][j] == 'R' && rtd[i][j-1] == 'R')
+                    turnRoad.transforms.push_back(centering * T * rotations[0]);
+                else if(rtd[i-1][j] == 'R' && rtd[i][j+1] == 'R')
+                    turnRoad.transforms.push_back(centering * T * rotations[1]);
+                else if(rtd[i][j-1] == 'R' && rtd[i][j+1] == 'R')
+                    straightRoad.transforms.push_back(centering * T * rotations[1]);
+                else
+                    straightRoad.transforms.push_back(centering * T);
+            }
+        }
+        //printf("\n");
+    }
+}
+
+const InstancedModel* RacingTrack::GetStraightRoad() const
+{
+    return &straightRoad;
+}
+
+const InstancedModel* RacingTrack::GetTurnRoad() const
+{
+    return &turnRoad;
+}
+
+const InstancedModel* RacingTrack::GetRoadBlock() const
+{
+    return &roadBlock;
+}
+
+void RacingTrack::CleanUp()
+{
+    straightRoad.CleanUp();
+    turnRoad.CleanUp();
+    roadBlock.CleanUp();
+}
