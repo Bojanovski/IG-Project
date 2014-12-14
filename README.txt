@@ -7,6 +7,7 @@ Sta treba instalirat:
 - SDL2 library: https://www.libsdl.org/download-2.0.php
 - glew library: http://glew.sourceforge.net/
 - DevIL: http://openil.sourceforge.net/
+- irrKlang: http://www.ambiera.com/irrklang/downloads.html
 - OpenGL 3.3+ (ovo vjerojatno imate)
 - Cmake: http://www.cmake.org/
 
@@ -15,7 +16,8 @@ Kako buildat:
 1. Instalirate sve ovo gore
 2. Napravite environment varijablu SDL2DIR koja pokazuje na root SDL2 direktorija
 3. Napravite environment varijablu GLEW_HOME koja pokazuje na root GLEW direktorija
-4. Stavite put do glew32.dll i sdl2.dll u PATH (ili ih metnete u system folder od windowsa)
+3. Napravite environment varijablu IRRKLANG_HOME koja pokazuje na root irrKlang direktorija
+4. Stavite put do glew32.dll, sdl2.dll i irrKlang dllova u PATH (ili ih metnete u system folder od windowsa)
 5. Stavite put do DevIL direktorija u path
 6. Pokrenete CMake gui i u "Where is the source code" metnete path do ovog direktorija.
    U "Where to build the binaries" metnete gdje vec ocete da se napravi projekt.
