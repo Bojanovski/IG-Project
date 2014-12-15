@@ -17,10 +17,12 @@ namespace engine
         ~Camera(void);
 
         void Rotate(float yaw, float pitch);
-        void Rranslate(const glm::vec3 &dir);
+        void Translate(const glm::vec3 &dir);
 
-        glm::mat4 GetProjectionMatrix() const;
-        glm::mat4 GetViewMatrix() const;
+        void ComputeView();
+        void ComputeProjection(float near, float far);
+        const glm::mat4& GetProjectionMatrix() const;
+        const glm::mat4& GetViewMatrix() const;
 
         void SetDirection(const glm::vec3 &direction);
 
@@ -32,6 +34,9 @@ namespace engine
         float aspectRatio;
         float FoV;
         float phix, phiy;
+    private:
+        glm::mat4 projection;
+        glm::mat4 view;
     };
 
 }

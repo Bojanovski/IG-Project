@@ -85,6 +85,7 @@ namespace engine
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
+        glActiveTexture(GL_TEXTURE2);
         for(int i = 0; i < 6; ++i)
         {
             const string filename = path + name + side_names[i] + extension;
@@ -114,8 +115,6 @@ namespace engine
         glDepthMask(GL_FALSE);
         p.Use();
         p.SetUniform("VP", VP);
-        glActiveTexture(GL_TEXTURE2);
-        cubemap.Bind();
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDepthMask(GL_TRUE);

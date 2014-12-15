@@ -18,8 +18,8 @@ namespace engine
         CameraHandler(const Camera &cam);
         virtual ~CameraHandler(void);
 
-        virtual glm::mat4 GetProjectionMatrix() const = 0;
-        virtual glm::mat4 GetViewMatrix() const = 0;
+        virtual const glm::mat4& GetProjectionMatrix() const = 0;
+        virtual const glm::mat4& GetViewMatrix() const = 0;
         const glm::vec3& GetPosition() const;
 
         Camera cam;

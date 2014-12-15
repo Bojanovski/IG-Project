@@ -25,8 +25,8 @@ namespace engine
         void Rotate(float yaw, float pitch);
         void Update(float dt);
 
-        glm::mat4 GetProjectionMatrix() const;
-        glm::mat4 GetViewMatrix() const;
+        const glm::mat4& GetProjectionMatrix() const;
+        const glm::mat4& GetViewMatrix() const;
 
         float speed;
         float rotationSpeed;
@@ -35,6 +35,8 @@ namespace engine
         glm::vec3 dir;
         float springiness;
         float dx, dy;
+
+        float far, near;
     };
 }
 

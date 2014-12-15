@@ -12,7 +12,7 @@ namespace engine
     vector<EventListener*> EventHandler::listenerList;
     vector<Updateable*> EventHandler::updateableList;
     bool EventHandler::quit = false;
-    bool EventHandler::isCursorFree = false;
+    bool EventHandler::isCursorFree = true;
     float EventHandler::timeStep = 1.0f / 60.0f;
     float EventHandler::accumulator = 0.0f;
 

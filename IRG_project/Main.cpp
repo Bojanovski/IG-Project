@@ -22,8 +22,7 @@ using namespace engine;
 using namespace engine_physics;
 using namespace glm;
 using namespace std;
-
-#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
+using namespace irrklang;
 
 void GameLoop()
 {
@@ -79,21 +78,20 @@ void GameLoop()
 
 	// Sounds
 		// start the sound engine with default parameters
-		irrklang::ISoundEngine* soundEngine = irrklang::createIrrKlangDevice();
+		ISoundEngine* soundEngine = createIrrKlangDevice();
 		if (!soundEngine)
 			return; // error starting up the engine
 
-		soundEngine->setListenerPosition(irrklang::vec3df(0, 0, 0), irrklang::vec3df(0, 0, 1));
-		irrklang::ISound* zvukMotora = soundEngine->play3D("../Resources/Sounds/zvukMotora.ogg",
-			irrklang::vec3df(0.f, 0.f, 0.f), true, false, true);
-		irrklang::ISound* skripanje = soundEngine->play3D("../Resources/Sounds/skripanje.ogg",
-			irrklang::vec3df(0, 0, 0), true, true, true);
-		irrklang::ISoundSource* zavrsetakSkripanja = soundEngine->addSoundSourceFromFile("../Resources/Sounds/zavrsetakSkripanja.ogg");
+		soundEngine->setListenerPosition(vec3df(0, 0, 0), vec3df(0, 0, 1));
+		ISound* zvukMotora = soundEngine->play3D("../Resources/Sounds/zvukMotora.ogg", vec3df(0.f, 0.f, 0.f), true, false, true);
+		ISound* skripanje = soundEngine->play3D("../Resources/Sounds/skripanje.ogg", vec3df(0.f, 0.f, 0.f), true, true, true);
+		ISoundSource* zavrsetakSkripanja = soundEngine->addSoundSourceFromFile("../Resources/Sounds/zavrsetakSkripanja.ogg");
+
 		if (!(zvukMotora && skripanje && zavrsetakSkripanja))
 			return; // error loading sounds
 		bool skripiOdPrije = false;
-		skripanje->setMinDistance(2);
-		zavrsetakSkripanja->setDefaultMinDistance(2);
+		skripanje->setMinDistance(2.0f);
+		zavrsetakSkripanja->setDefaultMinDistance(2.0f);
 		
 		float brzinaSada = 0.f, brzinaPrije = 0.f, speedLimit = 0.f;
 		DefaultCameraHandler* camera = r.getCameraHandler();
@@ -129,13 +127,10 @@ void GameLoop()
 			EventHandler::Update();
 
 		// Update listener position and orientation
-			vec3 listenerPositionVec3 = (*camera).cam.position;
-			irrklang::vec3df listenerPositionVec3df(listenerPositionVec3.x, listenerPositionVec3.y, listenerPositionVec3.z);
-			vec3 listenerDirectionVec3 = (*camera).cam.GetDirection();
-			irrklang::vec3df listenerDirectionVec3df(listenerDirectionVec3.x, listenerDirectionVec3.y, 	listenerDirectionVec3.z);
-			vec3 listenerUpVec3 = (*camera).cam.GetUp();
-			irrklang::vec3df listenerUpVec3df(-listenerUpVec3.x, -listenerUpVec3.y, -listenerUpVec3.z);
-			soundEngine->setListenerPosition(listenerPositionVec3df, listenerDirectionVec3df, irrklang::vec3df(0, 0, 0), listenerUpVec3df);
+            const vec3df listenerPositionVec3df(*(vec3df*)&camera->cam.position);
+			const vec3df listenerDirectionVec3df(*(vec3df*)&camera->cam.GetDirection());
+			const vec3df listenerUpVec3df(*(vec3df*)&camera->cam.GetUp());
+			soundEngine->setListenerPosition(listenerPositionVec3df, listenerDirectionVec3df, vec3df(0, 0, 0), listenerUpVec3df);
 
 		// Adjust engine sound
 			speedLimit = phyWorld.getSpeedLimit();
@@ -143,8 +138,7 @@ void GameLoop()
 			zvukMotora->setPlaybackSpeed(brzinaSada / speedLimit + 1);
 
 		// Set position of engine sound
-			vec3 carPosition = phyWorld.getCarPosition();
-			irrklang::vec3df carPositionVec3df(carPosition.x, carPosition.y, carPosition.z);
+			const vec3df carPositionVec3df(*(vec3df*)&phyWorld.getCarPosition());
 			zvukMotora->setPosition(carPositionVec3df);
 
 		// Set screeching tires

@@ -35,17 +35,14 @@ namespace engine
             phiy = -halfpi;
     }
 
-    mat4 Camera::GetProjectionMatrix() const
+    const mat4& Camera::GetProjectionMatrix() const
     {
-        return perspective(FoV, aspectRatio, 0.1f, 1000.0f);
+        return projection; 
     }
 
-    mat4 Camera::GetViewMatrix() const
+    const mat4& Camera::GetViewMatrix() const
     {
-        const vec3 direction = GetDirection();
-        const vec3 right = GetRight();
-        const vec3 up = cross(right, direction);
-        return lookAt(position, position + direction, up);
+        return view;
     }
 
     vec3 Camera::GetDirection() const
@@ -70,4 +67,19 @@ namespace engine
     {
         return cross(GetRight(), GetDirection());
     }
+
+    void Camera::ComputeView()
+    {
+        const vec3 direction = GetDirection();
+        const vec3 right = GetRight();
+        const vec3 up = cross(right, direction);
+        view = lookAt(position, position + direction, up);
+    }
+
+    void Camera::ComputeProjection(float near, float far)
+    {
+        projection = perspective(FoV, aspectRatio, near, far);
+    }
+
+
 }

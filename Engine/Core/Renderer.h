@@ -11,6 +11,9 @@
 
 namespace engine
 {
+    //sprites use texture slot 0
+    //models use texture slot 1
+    //skybox uses texture slot 2
 	class Renderer
         : public EventListener
 	{

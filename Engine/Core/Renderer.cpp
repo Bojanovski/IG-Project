@@ -67,7 +67,7 @@ namespace engine
 		_2Dprogram.SetUniform("color_map", 0);
 
 		// Default screen size
-		_size = glm::vec2(640,480);
+		_size = vec2(640,480);
 
         skybox.Load("../Resources/skybox/", "", ".jpg");
 	}
@@ -104,11 +104,11 @@ namespace engine
 	void Renderer::RenderSprite(const Sprite* sprite)
 	{
 		// Get sprite data
-		glm::vec2 spr_size = sprite->GetSize();
-		glm::vec2 spr_offset = sprite->GetOffset();
-		glm::vec2 tex_size = glm::vec2(sprite->GetTexture()->GetWidth(), sprite->GetTexture()->GetHeight());
-		glm::vec2 position = sprite->GetPosition();
-		glm::vec2 scale = sprite->GetScale();
+		const vec2& spr_size = sprite->GetSize();
+		const vec2& spr_offset = sprite->GetOffset();
+		const vec2 tex_size = vec2(sprite->GetTexture()->GetWidth(), sprite->GetTexture()->GetHeight());
+		vec2 position = sprite->GetPosition();
+		const vec2& scale = sprite->GetScale();
 		float angle = sprite->GetAngle();
 
 		// Calculate position (Origin is top left corner)
@@ -116,12 +116,12 @@ namespace engine
 		position.y = -2.0f * position.y + 1.0f;
 
 		// Transform matrix
-		glm::mat4 T = glm::mat4(1.0f); // Watch out! Reverse matrix order :)
-		T = glm::translate(T, glm::vec3(position, 0.0f)); // End by moving the sprite to the drawing postition
-		T = glm::scale(T, glm::vec3(2.0f / _size, 1.0f)); // Scale according to view size
-		T = glm::rotate(T, angle, glm::vec3(0.0f, 0.0f, -1.0f)); // Rotate
-		T = glm::scale(T, glm::vec3(spr_size * scale, 1.0f)); // Scale
-		T = glm::translate(T, glm::vec3(-0.5f, 0.5f, 0.0f)); // First move to the center
+		mat4 T = mat4(1.0f); // Watch out! Reverse matrix order :)
+		T = translate(T, vec3(position, 0.0f)); // End by moving the sprite to the drawing postition
+		T = glm::scale(T, vec3(2.0f / _size, 1.0f)); // Scale according to view size
+		T = rotate(T, angle, vec3(0.0f, 0.0f, -1.0f)); // Rotate
+		T = glm::scale(T, vec3(spr_size * scale, 1.0f)); // Scale
+		T = translate(T, vec3(-0.5f, 0.5f, 0.0f)); // First move to the center
 
 		// Disable depth and enable alpha blending
 		glDisable(GL_DEPTH_TEST);
@@ -155,8 +155,8 @@ namespace engine
         glActiveTexture(GL_TEXTURE1);
         _3Dprogram.Use();
 
-        const mat4 V = _camera.cam.GetViewMatrix();
-        const mat4 VP = _camera.cam.GetProjectionMatrix() * V;
+        const mat4 &V = _camera.cam.GetViewMatrix();
+        const mat4 &VP = _camera.cam.GetProjectionMatrix() * V;
 
         int i = 0;
         for(const TriangleMesh &mesh : model->meshes)
@@ -185,8 +185,8 @@ namespace engine
         glActiveTexture(GL_TEXTURE1);
         _3DprogramInstanced.Use();
 
-        const mat4 V = _camera.cam.GetViewMatrix();
-        const mat4 VP = _camera.cam.GetProjectionMatrix() * V;
+        const mat4 &V = _camera.cam.GetViewMatrix();
+        const mat4 &VP = _camera.cam.GetProjectionMatrix() * V;
 
         int i = 0;
         for(const TriangleMesh &mesh : model->meshes)
@@ -218,7 +218,7 @@ namespace engine
 		return _size;
 	}
 
-	void Renderer::SetClearColor(glm::vec3 color)
+	void Renderer::SetClearColor(vec3 color)
 	{
 		glClearColor(color.x, color.y, color.z, 1.0f);
 	}
@@ -232,10 +232,7 @@ namespace engine
 	{
 		if (e.type == SDL_WINDOWEVENT)
 			if (e.window.event == SDL_WINDOWEVENT_RESIZED)
-			{
 				glViewport(0, 0, e.window.data1, e.window.data2);
-				//SetViewSize(glm::vec2(e.window.data1, e.window.data2));
-			}
 	}
 
     void Renderer::CleanUp()
