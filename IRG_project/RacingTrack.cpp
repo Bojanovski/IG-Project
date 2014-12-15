@@ -82,21 +82,33 @@ void RacingTrack::LoadModels(const string &path, const string &straightfn, const
     Material &mat1 = straightRoad.materials[0];
     LoadObj(path, straightfn, mat1, straightRoad.meshes[0], true, false);
     mat1.diffuse_tex.GenerateMipmaps();
-    mat1.diffuse_tex.TexParamf(GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+    mat1.diffuse_tex.TexParami(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    mat1.diffuse_tex.TexParami(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    mat1.diffuse_tex.TexParami(GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+    mat1.diffuse_tex.TexParami(GL_TEXTURE_WRAP_T, GL_REPEAT);
+    mat1.diffuse_tex.TexParami(GL_TEXTURE_WRAP_S, GL_REPEAT);
 
     turnRoad.materials.push_back(Material());
     turnRoad.meshes.push_back(TriangleMesh());
     Material &mat2 = turnRoad.materials[0];
     LoadObj(path, turnfn, mat2, turnRoad.meshes[0], true, false);
     mat2.diffuse_tex.GenerateMipmaps();
-    mat2.diffuse_tex.TexParamf(GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+    mat2.diffuse_tex.TexParami(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    mat2.diffuse_tex.TexParami(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    mat2.diffuse_tex.TexParami(GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+    mat2.diffuse_tex.TexParami(GL_TEXTURE_WRAP_T, GL_REPEAT);
+    mat2.diffuse_tex.TexParami(GL_TEXTURE_WRAP_S, GL_REPEAT);
 
     roadBlock.materials.push_back(Material());
     roadBlock.meshes.push_back(TriangleMesh());
     Material &mat3 = roadBlock.materials[0];
     LoadObj(path, roadBlockfn, mat3, roadBlock.meshes[0], true, false);
     mat3.diffuse_tex.GenerateMipmaps();
-    mat3.diffuse_tex.TexParamf(GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+    mat3.diffuse_tex.TexParami(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    mat3.diffuse_tex.TexParami(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    mat3.diffuse_tex.TexParami(GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+    mat3.diffuse_tex.TexParami(GL_TEXTURE_WRAP_T, GL_REPEAT);
+    mat3.diffuse_tex.TexParami(GL_TEXTURE_WRAP_S, GL_REPEAT);
 
     roadTileDim = straightRoad.meshes[0].GetMaxDim();
 }
@@ -120,7 +132,6 @@ void RacingTrack::Create(RacingTrackDescription &rtd)
     {
         for(int j = 1; j < m; ++j)
         {
-            //printf("%c", rtd[i][j]);
             if(rtd[i][j] == 'R')
             {
                 mat4 T = translate(mat4(1.0f), vec3((float)i * roadTileDim, 0.0f, (float)j * roadTileDim));
@@ -139,7 +150,6 @@ void RacingTrack::Create(RacingTrackDescription &rtd)
                     straightRoad.transforms.push_back(centering * T);
             }
         }
-        //printf("\n");
     }
 }
 

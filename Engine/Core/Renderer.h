@@ -6,6 +6,7 @@
 #include <Engine/Core/DefaultCameraHandler.h>
 #include <Engine/Geometry/InstancedModel.h>
 #include <Engine/GL/Program.h>
+#include <Engine/GL/Skybox.h>
 #include <Engine/Core/Sprite.h>
 
 namespace engine
@@ -35,10 +36,12 @@ namespace engine
 		DefaultCameraHandler* getCameraHandler() { return &_camera; }
 
 	private:
-        void GenerateCubemap();
 		void RenderSprite(const Sprite* sprite);
         void RenderModel(const Model* model);
         void RenderInstancedModel(const InstancedModel* model);
+
+        //skybox
+        Skybox skybox;
 
         //sprites to render
         //Renderer does not own these
@@ -60,11 +63,6 @@ namespace engine
 		GLuint _quad_vao;
 		GLuint _quad_vbo;
         Program _2Dprogram;
-
-        //skybox stuff
-        GLuint _cube_vao;
-        GLuint _cube_vbo;
-        Texture cubemap;
 	};
 }
 

@@ -15,7 +15,7 @@ namespace engine
 {
 	Renderer::Renderer(void)
         : _2Dprogram("Shaders/sprite"), _3Dprogram("Shaders/DirectionalLight"), _3DprogramInstanced(VertexShader("Shaders/DirectionalLightInstanced"), FragmentShader("Shaders/DirectionalLight")),
-        _camera(Camera(vec3(3.0f, 0.5f, -5.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f), cubemap(GL_TEXTURE_CUBE_MAP)
+        _camera(Camera(vec3(3.0f, 0.5f, -5.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f)
 	{
         EventHandler::AddEventListener(&_camera);
         EventHandler::AddUpdateable(&_camera);
@@ -68,6 +68,8 @@ namespace engine
 
 		// Default screen size
 		_size = glm::vec2(640,480);
+
+        skybox.Load("../Resources/skybox/", "", ".jpg");
 	}
 
 	void Renderer::AddSprite(const Sprite *sprite)
@@ -87,6 +89,8 @@ namespace engine
 
 	void Renderer::Render()
 	{
+        skybox.Draw(_camera.cam.GetProjectionMatrix() * _camera.cam.GetViewMatrix());
+
 		for (const Model* model : models)
 			RenderModel(model);
 
@@ -242,73 +246,7 @@ namespace engine
         _2Dprogram.Destroy();
         _3Dprogram.Destroy();
         _3DprogramInstanced.Destroy();
-    }
 
-    void Renderer::GenerateCubemap()
-    {
-        static const GLfloat points[] = {
-            -10.0f,  10.0f, -10.0f,
-            -10.0f, -10.0f, -10.0f,
-            10.0f, -10.0f, -10.0f,
-            10.0f, -10.0f, -10.0f,
-            10.0f,  10.0f, -10.0f,
-            -10.0f,  10.0f, -10.0f,
-
-            -10.0f, -10.0f,  10.0f,
-            -10.0f, -10.0f, -10.0f,
-            -10.0f,  10.0f, -10.0f,
-            -10.0f,  10.0f, -10.0f,
-            -10.0f,  10.0f,  10.0f,
-            -10.0f, -10.0f,  10.0f,
-
-            10.0f, -10.0f, -10.0f,
-            10.0f, -10.0f,  10.0f,
-            10.0f,  10.0f,  10.0f,
-            10.0f,  10.0f,  10.0f,
-            10.0f,  10.0f, -10.0f,
-            10.0f, -10.0f, -10.0f,
-
-            -10.0f, -10.0f,  10.0f,
-            -10.0f,  10.0f,  10.0f,
-            10.0f,  10.0f,  10.0f,
-            10.0f,  10.0f,  10.0f,
-            10.0f, -10.0f,  10.0f,
-            -10.0f, -10.0f,  10.0f,
-
-            -10.0f,  10.0f, -10.0f,
-            10.0f,  10.0f, -10.0f,
-            10.0f,  10.0f,  10.0f,
-            10.0f,  10.0f,  10.0f,
-            -10.0f,  10.0f,  10.0f,
-            -10.0f,  10.0f, -10.0f,
-
-            -10.0f, -10.0f, -10.0f,
-            -10.0f, -10.0f,  10.0f,
-            10.0f, -10.0f, -10.0f,
-            10.0f, -10.0f, -10.0f,
-            -10.0f, -10.0f,  10.0f,
-            10.0f, -10.0f,  10.0f
-        };
-
-        glGenBuffers(1, &_cube_vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, _cube_vbo);
-        glBufferData(GL_ARRAY_BUFFER, 3 * 36 * sizeof(GLfloat), &points, GL_STATIC_DRAW);
-
-        glGenVertexArrays(1, &_cube_vao);
-        glBindVertexArray(_cube_vao);
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, _cube_vao);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-        static const string skybox[] = {
-            "skybox_left.jpg",
-            "skybox_right.jpg",
-            "skybox_top.jpg",
-            "skybox_bottom.jpg",
-            "skybox_far.jpg",
-            "skybox_near.jpg"
-        };
-
-        //TODO_JURE: finish
+        skybox.CleanUp();
     }
 }

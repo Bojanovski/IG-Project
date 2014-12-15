@@ -13,10 +13,10 @@ namespace engine
     {
     }
 
-    void Texture::LoadFromFile(const char *filename)
+    void Texture::LoadFromFile(const char *filename, GLenum _target, bool flip)
     {
         //skip if it already exists
-        if(ID)
+        if(ID && _target == GL_TEXTURE_2D)
             return;
 
         ILuint imageID;
@@ -35,7 +35,7 @@ namespace engine
 
         ILinfo ImageInfo;
         iluGetImageInfo(&ImageInfo);
-        if(ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+        if(flip)
             iluFlipImage();
 
         success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
@@ -43,13 +43,16 @@ namespace engine
         if(!success)
         {
             error = ilGetError();
-            cout << "Image conversion failed - IL reports error: " << error << " - " << iluErrorString(error) << endl;
+            cerr << "Image conversion failed - IL reports error: " << error << " - " << iluErrorString(error) << endl;
             exit(-1);
         }
 
-        GLCheckStmt(glGenTextures(1, &ID));
+        if(isAlive() == 0)
+        {
+            GLCheckStmt(glGenTextures(1, &ID));
+        }
         GLCheckStmt(Bind());
-        GLCheckStmt(glTexImage2D(target, 0, GL_RGBA8, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData()));
+        GLCheckStmt(glTexImage2D(_target, 0, GL_RGBA8, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData()));
 
         width = ilGetInteger(IL_IMAGE_WIDTH);
         height = ilGetInteger(IL_IMAGE_HEIGHT);
@@ -129,7 +132,7 @@ namespace engine
 
     bool Texture::isAlive() const
     {
-        return ID;
+        return ID > 0;
     }
 
 };

@@ -43,6 +43,7 @@ set(Engine_Core_HDRS
 set(Engine_GL_SRCS
     GL/Shader.cpp
     GL/Texture.cpp
+    GL/Skybox.cpp
     GL/VertexShader.cpp
     GL/GeometryShader.cpp
     GL/FragmentShader.cpp
@@ -52,6 +53,7 @@ set(Engine_GL_SRCS
 set(Engine_GL_HDRS
     GL/Shader.h
     GL/Texture.h
+    GL/Skybox.h
     GL/VertexShader.h
     GL/GeometryShader.h
     GL/FragmentShader.h

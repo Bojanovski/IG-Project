@@ -15,7 +15,7 @@ namespace engine
         void Bind() const;
         void UnBind() const;
 
-        void LoadFromFile(const char *filename);
+        void LoadFromFile(const char *filename, GLenum _target = GL_TEXTURE_2D, bool flip = true);
         void LoadDefault();
         void Destroy();
 
