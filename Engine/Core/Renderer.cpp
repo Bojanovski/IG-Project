@@ -15,7 +15,7 @@ namespace engine
 {
 	Renderer::Renderer(void)
         : _2Dprogram("Shaders/sprite"), _3Dprogram("Shaders/DirectionalLight"), _3DprogramInstanced(VertexShader("Shaders/DirectionalLightInstanced"), FragmentShader("Shaders/DirectionalLight")),
-        _camera(Camera(vec3(3.0f, 0.5f, -5.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f)
+        _camera(Camera(vec3(3.0f, 0.5f, -5.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f), sceneAmbient(0.1f, 0.1f, 0.1f)
 	{
         EventHandler::AddEventListener(&_camera);
         EventHandler::AddUpdateable(&_camera);
@@ -53,13 +53,15 @@ namespace engine
 		GLCheckStmt(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)sizeof(_quad)));
 
         _3Dprogram.Use();
-        _3Dprogram.SetUniform("lightDirection", normalize(vec3(0.0f, 1.0f, -1.0f)));
+        _3Dprogram.SetUniform("lightDirection", normalize(vec3(-1.0f, 0.9f, 1.0f)));
         _3Dprogram.SetUniform("lightIntensity", vec3(1.0f, 1.0f, 1.0f));
+        _3Dprogram.SetUniform("scene_ambient", sceneAmbient);
         _3Dprogram.SetUniform("textureSampler", 1);
 
         _3DprogramInstanced.Use();
-        _3DprogramInstanced.SetUniform("lightDirection", normalize(vec3(0.0f, 1.0f, -1.0f)));
+        _3DprogramInstanced.SetUniform("lightDirection", normalize(vec3(-1.0f, 0.9f, 1.0f)));
         _3DprogramInstanced.SetUniform("lightIntensity", vec3(1.0f, 1.0f, 1.0f));
+        _3DprogramInstanced.SetUniform("scene_ambient", sceneAmbient);
         _3DprogramInstanced.SetUniform("textureSampler", 1);
 
 		// Load 2d shader

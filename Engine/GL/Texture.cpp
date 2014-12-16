@@ -60,13 +60,19 @@ namespace engine
         ilDeleteImages(1, &imageID);
     }
 
-    void Texture::LoadDefault()
+    void Texture::LoadDefault(const glm::vec4 &color)
     {
         //skip if it already exists
         if(ID)
             return;
 
-        static const GLubyte white[] = {255, 255, 255, 255};
+        const GLubyte white[4] =
+        {
+            static_cast<GLubyte>(color.r * 255.0f),
+            static_cast<GLubyte>(color.g * 255.0f),
+            static_cast<GLubyte>(color.b * 255.0f),
+            static_cast<GLubyte>(color.a * 255.0f)
+        };
 
         GLCheckStmt(glGenTextures(1, &ID));
         GLCheckStmt(Bind());

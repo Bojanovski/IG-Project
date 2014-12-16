@@ -2,6 +2,7 @@
 #define EN_TEXTURE_H
 
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 
 namespace engine
 {
@@ -16,7 +17,7 @@ namespace engine
         void UnBind() const;
 
         void LoadFromFile(const char *filename, GLenum _target = GL_TEXTURE_2D, bool flip = true);
-        void LoadDefault();
+        void LoadDefault(const glm::vec4 &color);
         void Destroy();
 
         void GenerateMipmaps() const;
