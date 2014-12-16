@@ -9,9 +9,9 @@
 
 namespace engine
 {
-    static const float pi = 3.14159165359f;
-    static const float halfpi = pi / 2.0f;
-    static const float EPS = 0.001f;
+    const float PI = 3.14159165359f;
+    const float HALF_PI = PI / 2.0f;
+    const float EPS = 0.001f;
 
     template<class T>
     float Clamp(T x, T a, T b);

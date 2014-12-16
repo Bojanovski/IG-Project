@@ -31,7 +31,8 @@ public:
 
     void LoadModels(const std::string &path, const std::string &straightfn, const std::string &turnfn, const std::string &roadBlockfn);
     void LoadToGPU();
-    void Create(RacingTrackDescription &rtd);
+    //returns car transform
+    std::pair<glm::vec2, float> Create(RacingTrackDescription &rtd);
     void CleanUp();
 
     const engine::InstancedModel* GetStraightRoad() const;

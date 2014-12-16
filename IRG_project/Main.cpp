@@ -46,15 +46,15 @@ void GameLoop()
 		sgn.SetPosition(glm::vec2(0.15f, 0.85f));
 		sgn.SetScale(glm::vec2(0.50f, 0.50f));
 
-	// Player car
-		CarModel car;
-		car.LoadModel("../Resources/CAR/");
-
     // Init racing track
         RacingTrack rt;
         rt.LoadModels("../Resources/Road/", "road_str.obj", "road_curve.obj", "barrier.obj");
-        rt.Create(RacingTrackDescription("../Resources/TrackDescription.txt"));
+        const pair<vec2, float> carTransform = rt.Create(RacingTrackDescription("../Resources/TrackDescription.txt"));
         rt.LoadToGPU();
+
+	// Player car
+		CarModel car;
+		car.LoadModel("../Resources/CAR/");
 
 	// Init renderer
 		Renderer r;
@@ -72,7 +72,7 @@ void GameLoop()
         r.AddInstancedModel(rt.GetTurnRoad());
 
     // Physics
-		World phyWorld(vec2(3.0f, 0.0f), 0.0f);
+		World phyWorld(carTransform.first, carTransform.second);
 		EventHandler::AddEventListener(&phyWorld);
 		EventHandler::AddUpdateable(&phyWorld);
 
@@ -135,7 +135,7 @@ void GameLoop()
 		// Adjust engine sound
 			speedLimit = phyWorld.getSpeedLimit();
 			brzinaSada = speed;
-			zvukMotora->setPlaybackSpeed(1.78f);
+            zvukMotora->setPlaybackSpeed(brzinaSada / speedLimit + 1.0f);
 
 		// Set position of engine sound
 			const vec3df carPositionVec3df(*(vec3df*)&phyWorld.getCarPosition());

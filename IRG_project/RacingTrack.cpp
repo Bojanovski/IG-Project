@@ -3,6 +3,7 @@
 #include <fstream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <Engine/Geometry/ObjectLoader.h>
+#include <Engine/Common/MathFunctions.h>
 
 using namespace engine;
 using namespace std;
@@ -122,19 +123,41 @@ void RacingTrack::LoadToGPU()
 }
 
 
-void RacingTrack::Create(RacingTrackDescription &rtd)
+pair<vec2, float> RacingTrack::Create(RacingTrackDescription &rtd)
 {
+    pair<vec2, float> carTransform;
     const mat4 centering = translate(mat4(1.0f), vec3((float)rtd.Height(), 0.0f, (float)rtd.Width()) * roadTileDim * -0.5f);
 
     const int n = rtd.Height() - 1;
     const int m = rtd.Width() - 1;
+
+    //carTransform
+    for(int i = 1; i < n; ++i)
+    {
+        bool found = false;
+        for(int j = 1; j < m; ++j)
+            if(rtd[i][j] == 'C')
+            {
+                vec4 pos((float)i * roadTileDim, 0.0f,  (float)j * roadTileDim, 1.0f);
+                pos = centering * pos;
+                carTransform.first = vec2(pos.x, pos.z);
+                carTransform.second = (rtd[i][j-1] == 'R' && rtd[i][j+1] == 'R') ? HALF_PI : 0.0f;
+
+                rtd[i][j] = 'R';
+                found = true;
+                break;
+            }
+        if(found)
+            break;
+    }
+
     for(int i = 1; i < n; ++i)
     {
         for(int j = 1; j < m; ++j)
         {
-            if(rtd[i][j] == 'R')
+            if(rtd[i][j] == 'R' || rtd[i][j] == 'C')
             {
-                mat4 T = translate(mat4(1.0f), vec3((float)i * roadTileDim, 0.0f, (float)j * roadTileDim));
+                const mat4 T = translate(mat4(1.0f), vec3((float)i * roadTileDim, 0.0f, (float)j * roadTileDim));
 
                 if(rtd[i+1][j] == 'R' && rtd[i][j+1] == 'R')
                     turnRoad.transforms.push_back(centering * T * rotations[2]);
@@ -151,6 +174,7 @@ void RacingTrack::Create(RacingTrackDescription &rtd)
             }
         }
     }
+    return carTransform;
 }
 
 const InstancedModel* RacingTrack::GetStraightRoad() const
