@@ -3,14 +3,18 @@ project(IRG_project)
 # Define the source files.
 set(IRG_project_SRCS
     Main.cpp
+    GameEngine.cpp
     Car.cpp
     RacingTrack.cpp
+    CarCameraHandler.cpp
 )
 
 # Define the header files.
 set(IRG_project_HDRS
     Car.h
+    GameEngine.h
     RacingTrack.h
+    CarCameraHandler.h
 )
 
 file(COPY Shaders DESTINATION .)

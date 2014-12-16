@@ -68,7 +68,6 @@ int RacingTrackDescription::Height() const
 
 RacingTrack::RacingTrack(void)
 {
-    const mat4 I(1.0f);
     const vec3 j(0.0f, 1.0f, 0.0f);
     rotations[0] = rotate(I, 0.0f, j);
     rotations[1] = rotate(I, 90.0f, j);

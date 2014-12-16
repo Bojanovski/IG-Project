@@ -10,6 +10,7 @@
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
 #include "Car.h"
+#include "CarCameraHandler.h"
 #include "RacingTrack.h"
 #include <Engine\Physics\World.h>
 
@@ -76,6 +77,19 @@ void GameLoop()
 		EventHandler::AddEventListener(&phyWorld);
 		EventHandler::AddUpdateable(&phyWorld);
 
+    // Init cameras
+        int w, h;
+        SDLHandler::GetWindowSize(w, h);
+        DefaultCameraHandler freeCamera(Camera(vec3(3.0f, 0.5f, -5.0f), (float)w / (float)h, 60.0f), 4.0f, 0.0025f);
+        CarCameraHandler carCamera(Camera(vec3(3.0f, 0.5f, -5.0f), (float)w / (float)h, 60.0f), &phyWorld.GetChassis());
+
+        EventHandler::AddEventListener(&freeCamera);
+        EventHandler::AddUpdateable(&freeCamera);
+        EventHandler::AddEventListener(&carCamera);
+        EventHandler::AddUpdateable(&carCamera);
+
+        r.SetCamera(&carCamera);
+
 	// Sounds
 		// start the sound engine with default parameters
 		ISoundEngine* soundEngine = createIrrKlangDevice();
@@ -94,7 +108,7 @@ void GameLoop()
 		zavrsetakSkripanja->setDefaultMinDistance(2.0f);
 		
 		float brzinaSada = 0.f, brzinaPrije = 0.f, speedLimit = 0.f;
-		DefaultCameraHandler* camera = r.getCameraHandler();
+		const CameraHandler *camera = r.getCameraHandler();
 
 	// Game loop
 	do{
@@ -126,6 +140,7 @@ void GameLoop()
 			EventHandler::ProcessPolledEvents();
 			EventHandler::Update();
 
+        // Sound
 		// Update listener position and orientation
             const vec3df listenerPositionVec3df(*(vec3df*)&camera->cam.position);
 			const vec3df listenerDirectionVec3df(*(vec3df*)&camera->cam.GetDirection());
