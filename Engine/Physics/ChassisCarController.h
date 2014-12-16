@@ -47,6 +47,10 @@ namespace engine_physics
 		glm::mat4 mM_frontRight;
 		glm::mat4 mM_backLeft;
 		glm::mat4 mM_backRight;
+		glm::mat4 mM_frontLeft_prev;
+		glm::mat4 mM_frontRight_prev;
+		glm::mat4 mM_backLeft_prev;
+		glm::mat4 mM_backRight_prev;
 
 		// connection points on car
 		glm::vec4 mCP_frontLeft;

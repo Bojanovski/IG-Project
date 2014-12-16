@@ -72,7 +72,7 @@ void GameLoop()
         r.AddInstancedModel(rt.GetTurnRoad());
 
     // Physics
-		World phyWorld;
+		World phyWorld(vec2(3.0f, 0.0f), 0.0f);
 		EventHandler::AddEventListener(&phyWorld);
 		EventHandler::AddUpdateable(&phyWorld);
 
@@ -135,7 +135,7 @@ void GameLoop()
 		// Adjust engine sound
 			speedLimit = phyWorld.getSpeedLimit();
 			brzinaSada = speed;
-			zvukMotora->setPlaybackSpeed(brzinaSada / speedLimit + 1);
+			zvukMotora->setPlaybackSpeed(1.78f);
 
 		// Set position of engine sound
 			const vec3df carPositionVec3df(*(vec3df*)&phyWorld.getCarPosition());

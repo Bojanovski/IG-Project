@@ -49,9 +49,11 @@ namespace engine_physics
 
 		// transformation matrix
 		glm::mat4 mM;
+		glm::mat4 mM_previous;
 
 		glm::mat3x3 mInertiaTensor;
-		glm::mat3x3 mInverseInertiaTensor;
+		glm::mat3x3 mInverseInertiaTensorBody;
+		glm::mat3x3 mInverseInertiaTensorWorld;
 	};
 }
 

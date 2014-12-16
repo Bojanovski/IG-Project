@@ -12,7 +12,7 @@ namespace engine_physics
 	class World : public engine::EventListener, public engine::Updateable
 	{
 	public:
-		World();
+		World(const glm::vec2 &carPos, float carYRot);
 		~World();
 
 		const CarRigidBody &GetCar() { return mCar; }

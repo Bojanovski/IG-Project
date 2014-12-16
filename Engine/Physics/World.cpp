@@ -8,7 +8,7 @@
 using namespace engine_physics;
 using namespace glm;
 
-World::World()
+World::World(const vec2 &carPos, float carYRot)
 : mCar(1.6f, 1.2f, 3.0f, 1.0f),
 mGravitiy(0.0f, -9.81f, 0.0f),
 mChassis(&mCar),
@@ -19,7 +19,13 @@ mCarSteering(0.0f),
 mCarSpeed(0.0f),
 mCarSpeedLimit(5.0f)
 {
-	glm::vec3 v = glm::vec3(1.0f, 0.0f, 0.0f);
+	float elevation = 0.7f;
+	mCar.mPos = vec3(carPos.x, elevation, carPos.y);
+	mCar.UpdateTransformationMatrix();
+	mCar.UpdateTransformationMatrix(); // two times for "_previous" data
+	mChassis.AddToPosition(vec3(carPos.x, elevation, carPos.y));
+	mChassis.UpdateTransformationMatrices();
+	mChassis.UpdateTransformationMatrices(); // two times for "_previous" data
 }
 
 World::~World()
@@ -42,7 +48,9 @@ void World::Update(float dt)
 	}
 	if (mGoLeft != mGoRight)
 	{
-		float currentMaxSteering = 3.14f / 4.0f;
+		float coeff = (3.0f / abs(mCarSpeed));
+		if (coeff > 1.0f) coeff = 1.0f;
+		float currentMaxSteering = 3.14f / 4.0f * coeff;
 		//if (mCarSpeed > 1.0f) currentMaxSteering /= mCarSpeed * 0.01f;
 		mCarSteering += ((mGoLeft) ? 1.0f : -1.0f) * 2.0f * dt;
 		if (mCarSteering > currentMaxSteering) mCarSteering = currentMaxSteering;
@@ -85,7 +93,7 @@ void World::Update(float dt)
 		if (s1 >= 0.0f) s = s1;
 		if (s2 < s && s2 >= 0.0f) s = s2; // we need the smaller one (but positive)
 
-		if (s > 0.0f)
+		if (s > 0.0f && s < length)
 		{
 			vec4 newBack = back + s*dirN;
 			vec4 newDir = newFront - newBack;
@@ -94,7 +102,14 @@ void World::Update(float dt)
 			vec4 offsetPos = newCPos - cPos;
 			mChassis.AddToPosition(vec3(offsetPos));
 			float angle = radians(glm::angle(dirN, newDirN));
-			mChassis.AddToYRot(sign(mCarSteering) * angle);
+			mChassis.AddToYRot(sign(mCarSteering) * abs(angle));
+
+			float lool = glm::sqrt(dot(offsetPos, offsetPos));
+			if (lool > 2.0f)
+			{
+				int a;
+				a = 4;
+			}
 		}
 	}
 

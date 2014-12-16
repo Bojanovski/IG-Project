@@ -21,6 +21,9 @@ mTorqueAccumulator(0.0f, 0.0f, 0.0f)
 {
 	vec3 EulerAngles(0, 0, 0);
 	mOri = quat(EulerAngles);
+	mat4 translationMatrix = translate(mat4(), mPos);
+	mat4 rotationMatrix = toMat4(mOri);
+	mM_previous = mM = translationMatrix * rotationMatrix;
 
 	mMass = mWidth * mHeight * mLength * mDensity;
 	mInvMass = 1.0f / mMass;
@@ -29,7 +32,7 @@ mTorqueAccumulator(0.0f, 0.0f, 0.0f)
 		0.0f, mMass*(width*width + length*length) / 12.0f, 0.0f,
 		0.0f, 0.0f, mMass*(width*width + height*height) / 12.0f);
 
-	mInverseInertiaTensor = inverse(mInertiaTensor);
+	mInverseInertiaTensorBody = inverse(mInertiaTensor);
 }
 
 CarRigidBody::~CarRigidBody()
@@ -44,7 +47,7 @@ void CarRigidBody::Integrate(float dt)
 	mLinVel += mLinAcc * dt;
 
 	// angular
-	mAngAcc = mInverseInertiaTensor * mTorqueAccumulator;
+	mAngAcc = mInverseInertiaTensorWorld * mTorqueAccumulator;
 	mAngVel += mAngAcc * dt;
 
 	// Impose drag.
@@ -66,9 +69,15 @@ void CarRigidBody::Integrate(float dt)
 
 void CarRigidBody::UpdateTransformationMatrix()
 {
+	mM_previous = mM;
 	mat4 translationMatrix = translate(mat4(), mPos);
 	mat4 rotationMatrix = toMat4(mOri);
 	mM = translationMatrix * rotationMatrix;
+
+	// inverse inertia tensor in world space
+	mat3 R = toMat3(mOri);
+	mat3 iR = transpose(R);
+	mInverseInertiaTensorWorld = R * mInverseInertiaTensorBody * iR;
 }
 
 void CarRigidBody::ClearAccumulators()
