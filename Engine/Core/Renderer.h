@@ -43,6 +43,8 @@ namespace engine
         void RenderModel(const Model* model);
         void RenderInstancedModel(const InstancedModel* model);
 
+        glm::vec3 sceneAmbient;
+
         //skybox
         Skybox skybox;
 

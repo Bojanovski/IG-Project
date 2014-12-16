@@ -118,8 +118,8 @@ namespace engine
         float miny = FLT_MAX;
         for(const vec3 &p : positions)
         {
-            maxy = max(maxy, p.x);
-            miny = min(miny, p.x);
+            maxy = max(maxy, p.y);
+            miny = min(miny, p.y);
         }
         return maxy - miny;
     }
@@ -130,8 +130,8 @@ namespace engine
         float minz = FLT_MAX;
         for(const vec3 &p : positions)
         {
-            maxz = max(maxz, p.x);
-            minz = min(minz, p.x);
+            maxz = max(maxz, p.z);
+            minz = min(minz, p.z);
         }
         return maxz - minz;
     }
