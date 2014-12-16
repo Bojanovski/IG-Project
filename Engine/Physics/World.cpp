@@ -7,8 +7,12 @@
 
 using namespace engine_physics;
 using namespace glm;
+using namespace std;
 
-World::World(const vec2 &carPos, float carYRot)
+const float StraightRoad::mLength = 4.0f;
+const float StraightRoad::mWidth = 4.0f;
+
+World::World()
 : mCar(1.6f, 1.2f, 3.0f, 1.0f),
 mGravitiy(0.0f, -9.81f, 0.0f),
 mChassis(&mCar),
@@ -19,6 +23,16 @@ mCarSteering(0.0f),
 mCarSpeed(0.0f),
 mCarSpeedLimit(5.0f)
 {
+
+}
+
+World::~World()
+{
+
+}
+
+void World::Initialize(const vec2 &carPos, float carYRot)
+{
 	float elevation = 0.7f;
 	mCar.mPos = vec3(carPos.x, elevation, carPos.y);
 	mCar.UpdateTransformationMatrix();
@@ -28,9 +42,28 @@ mCarSpeedLimit(5.0f)
 	mChassis.UpdateTransformationMatrices(); // two times for "_previous" data
 }
 
-World::~World()
+void World::AddStraightRoads(vector<mat4> &sRoads)
 {
+	StraightRoad road;
+	for (unsigned int i = 0; i < sRoads.size(); ++i)
+	{
+		vec4 dir = sRoads[i] * vec4(0.0f, 0.0f, 1.0f, 0.0f);
+		dir = normalize(dir);
+		vec4 pos = sRoads[i] * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		road.mDir = vec2(dir.x, dir.z);
+		road.mPos = vec2(pos.x, pos.z);
+		mSRoads.push_back(road);
+	}
+}
 
+void World::CalcualteElevationAtPoint(const vec2 &p)
+{
+	//vec4 p4 = vec4(p.x, 0.0f, p.y, 1.0f);
+	//// straight roads
+	//for (unsigned int i = 0; i < mSRoads.size(); ++i)
+	//{
+	//	vec3 perp = 
+	//}
 }
 
 void World::Update(float dt)
@@ -104,16 +137,13 @@ void World::Update(float dt)
 			float angle = radians(glm::angle(dirN, newDirN));
 			mChassis.AddToYRot(sign(mCarSteering) * abs(angle));
 
-			float lool = glm::sqrt(dot(offsetPos, offsetPos));
-			if (lool > 2.0f)
-			{
-				int a;
-				a = 4;
-			}
+			//static float jo = 3.0f;
+			//jo += dt;
+			//mChassis.mElevation_backLeft = 0.5f*sin(jo);
 		}
 	}
 
-	mChassis.Update();
+	mChassis.Update(dt);
 	//mCar.AddForceAtPoint(-mGravitiy, vec3(1.0f, 0.0f, 0.0f));
 	//mCar.AddTorque(vec3(0.0f, 1.0f, 0.0f));
 	mCar.AddForce(mGravitiy);
