@@ -22,7 +22,7 @@ namespace engine_physics
 
 	private:
 		void UpdateTransformationMatrices();
-		void Update();
+		void Update(float dt);
 		void AddToPosition(glm::vec3 v);
 		float GetYRot() { return mYRot; }
 		void  AddToYRot(float yRot) { mYRot += yRot; }
@@ -41,6 +41,12 @@ namespace engine_physics
 		glm::vec3 mPos;
 		float mYRot;
 		float mYSteeringRot;
+
+		// elevation of the wheels (due to different heights on the map)
+		float mElevation_frontLeft;
+		float mElevation_frontRight;
+		float mElevation_backLeft;
+		float mElevation_backRight;
 
 		// transformation matrices of the wheels
 		glm::mat4 mM_frontLeft;

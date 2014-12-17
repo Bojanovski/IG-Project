@@ -5,12 +5,17 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtx\vector_angle.hpp>
 
+#define PI_DIV2 1.57079632f
+#define PI_DIV4 0.78539816f
+
 using namespace engine_physics;
 using namespace glm;
 using namespace std;
 
-const float StraightRoad::mLength = 4.0f;
+const float StraightRoad::mHalfLength = 8.0f;
 const float StraightRoad::mWidth = 4.0f;
+const float TurnRoad::mRadius = 8.0f;
+const float TurnRoad::mWidth = 4.0f;
 
 World::World()
 : mCar(1.6f, 1.2f, 3.0f, 1.0f),
@@ -47,7 +52,7 @@ void World::AddStraightRoads(vector<mat4> &sRoads)
 	StraightRoad road;
 	for (unsigned int i = 0; i < sRoads.size(); ++i)
 	{
-		vec4 dir = sRoads[i] * vec4(0.0f, 0.0f, 1.0f, 0.0f);
+		vec4 dir = sRoads[i] * vec4(1.0f, 0.0f, 0.0f, 0.0f);
 		dir = normalize(dir);
 		vec4 pos = sRoads[i] * vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		road.mDir = vec2(dir.x, dir.z);
@@ -56,14 +61,62 @@ void World::AddStraightRoads(vector<mat4> &sRoads)
 	}
 }
 
-void World::CalcualteElevationAtPoint(const vec2 &p)
+void World::AddTurnRoads(std::vector<glm::mat4> &tRoads)
 {
-	//vec4 p4 = vec4(p.x, 0.0f, p.y, 1.0f);
-	//// straight roads
-	//for (unsigned int i = 0; i < mSRoads.size(); ++i)
-	//{
-	//	vec3 perp = 
-	//}
+	TurnRoad road;
+	for (unsigned int i = 0; i < tRoads.size(); ++i)
+	{
+		vec4 dir = tRoads[i] * vec4(1.0f, 0.0f, 1.0f, 0.0f);
+		dir = normalize(dir);
+		vec4 pos = tRoads[i] * vec4(0.0f, 0.0f, 0.0f, 1.0f) - dir*glm::sqrt(StraightRoad::mHalfLength*StraightRoad::mHalfLength*2.0f);
+		road.mDir = vec2(dir.x, dir.z);
+		road.mPos = vec2(pos.x, pos.z);
+		mTRoads.push_back(road);
+	}
+}
+
+float World::CalcualteElevationAtPoint(float x, float z)
+{
+	vec3 p4 = vec3(x, 0.0f, z);
+	float elevation = 0.0f;
+	// straight roads
+	for (unsigned int i = 0; i < mSRoads.size(); ++i)
+	{
+		vec3 pDir = vec3(mSRoads[i].mPos.x, 0.0f, mSRoads[i].mPos.y) - p4;
+		vec3 roadDir = normalize(vec3(mSRoads[i].mDir.x, 0.0f, mSRoads[i].mDir.y));
+		vec3 perp = cross(roadDir, pDir);
+		vec3 towardsP = normalize(cross(perp, roadDir));
+		float proj = dot(pDir, towardsP); // this is also the distance from line that goes through road segment
+		float projOnRoad = dot(pDir, roadDir);
+		if (abs(projOnRoad) > StraightRoad::mHalfLength) continue;
+		if (abs(proj) > (StraightRoad::mWidth + 0.5f)) continue;
+		float tempElevation = 1.0f - (abs(proj) - StraightRoad::mWidth) / (0.5f);
+		if (tempElevation > 1.0f) tempElevation = 1.0f;
+		if (tempElevation < 0.0f) tempElevation = 0.0f;
+		float newElevation = 0.5f * tempElevation;
+		if (newElevation > elevation)
+			elevation = newElevation;
+	}
+
+	// turn roads
+	for (unsigned int i = 0; i < mTRoads.size(); ++i)
+	{
+		vec3 pRel = p4 - vec3(mTRoads[i].mPos.x, 0.0f, mTRoads[i].mPos.y);
+		float dist = abs(glm::sqrt(dot(pRel, pRel)) - TurnRoad::mRadius);
+		vec3 roadQuadrantDir = normalize(vec3(mTRoads[i].mDir.x, 0.0f, mTRoads[i].mDir.y));
+		float angle = dot(roadQuadrantDir, normalize(pRel));
+		if (angle < cos(PI_DIV4)) continue;
+		if (dist >(TurnRoad::mWidth + 0.5f)) continue;
+
+		float tempElevation = 1.0f - (dist - StraightRoad::mWidth) / (0.5f);
+		if (tempElevation > 1.0f) tempElevation = 1.0f;
+		if (tempElevation < 0.0f) tempElevation = 0.0f;
+		float newElevation = 0.5f * tempElevation;
+		if (newElevation > elevation)
+			elevation = newElevation;
+	}
+
+	return elevation;
 }
 
 void World::Update(float dt)
@@ -142,6 +195,12 @@ void World::Update(float dt)
 			//mChassis.mElevation_backLeft = 0.5f*sin(jo);
 		}
 	}
+
+	// wheels elevation
+	mChassis.mElevation_frontLeft = CalcualteElevationAtPoint(frontLeft.x, frontLeft.z);
+	mChassis.mElevation_frontRight = CalcualteElevationAtPoint(frontRight.x, frontRight.z);
+	mChassis.mElevation_backLeft = CalcualteElevationAtPoint(backLeft.x, backLeft.z);
+	mChassis.mElevation_backRight = CalcualteElevationAtPoint(backRight.x, backRight.z);
 
 	mChassis.Update(dt);
 	//mCar.AddForceAtPoint(-mGravitiy, vec3(1.0f, 0.0f, 0.0f));

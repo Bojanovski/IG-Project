@@ -11,7 +11,15 @@ namespace engine_physics
 {
 	struct StraightRoad
 	{
-		static const float mLength;
+		static const float mHalfLength;
+		static const float mWidth;
+		glm::vec2 mDir;
+		glm::vec2 mPos;
+	};
+
+	struct TurnRoad
+	{
+		static const float mRadius;
 		static const float mWidth;
 		glm::vec2 mDir;
 		glm::vec2 mPos;
@@ -28,13 +36,14 @@ namespace engine_physics
 
 		void Initialize(const glm::vec2 &carPos, float carYRot);
 		void AddStraightRoads(std::vector<glm::mat4> &sRoads);
+		void AddTurnRoads(std::vector<glm::mat4> &tRoads);
 		float GetCarSpeed() { return mCarSpeed; }
 		float getSpeedLimit() { return mCarSpeedLimit; }
 		glm::vec3 getCarPosition() { return mChassis.mPos; }
 		bool isTurning() { return mGoRight || mGoLeft; }
 
 	private:
-		void CalcualteElevationAtPoint(const glm::vec2 &p);
+		float CalcualteElevationAtPoint(float x, float z);
 		void Update(float dt);
 		void HandleEvent(const SDL_Event &e);
 		void KeyPress(const SDL_KeyboardEvent &e);
@@ -45,6 +54,7 @@ namespace engine_physics
 		float mCarSteering, mCarSpeed, mCarSpeedLimit;
 		glm::vec3 mGravitiy;
 		std::vector<StraightRoad> mSRoads;
+		std::vector<TurnRoad> mTRoads;
 	};
 }
 
