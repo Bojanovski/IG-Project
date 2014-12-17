@@ -1,0 +1,11 @@
+
+#windowWidth 1280
+#windowHeight 720
+
+//cameras field of view
+#FOV 75.0
+//0/1 == on/off
+#FXAA 0
+//window resolution is multiplied by this
+//to get the frame resolution
+#resolutionScale 1.0

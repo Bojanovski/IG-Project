@@ -1,3 +1,0 @@
-roadblocks around the road
-SSAA, FXAA
-Settings.txt

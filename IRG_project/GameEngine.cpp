@@ -1,4 +1,5 @@
 #include "GameEngine.h"
+#include "GraphicsSettings.h"
 #include <glm/glm.hpp>
 #include <Engine/Core/EventHandler.h>
 #include <Engine/Core/SDLHandler.h>
@@ -10,9 +11,10 @@ using namespace std;
 using namespace irrklang;
 
 GameEngine::GameEngine(void)
-    : freeCamera(Camera(vec3(3.0f, 0.5f, -5.0f), 1.0f / 1.0f, 60.0f), 4.0f, 0.0025f),
-    carCamera(Camera(vec3(3.0f, 0.5f, -5.0f), 1.0f / 1.0f, 60.0f), &phyWorld.GetChassis()),
-    isCameraFree(false)
+    : 
+    isCameraFree(false),
+    freeCamera(Camera(vec3(3.0f, 0.5f, -5.0f), (float)GraphicsSettings::windowWidth / (float)GraphicsSettings::windowHeight, GraphicsSettings::FOV), 4.0f, 0.0025f),
+    carCamera(Camera(vec3(3.0f, 0.5f, -5.0f), (float)GraphicsSettings::windowWidth / (float)GraphicsSettings::windowHeight, GraphicsSettings::FOV), &phyWorld.GetChassis())
 {
     EventHandler::AddEventListener(this);
 
@@ -22,14 +24,14 @@ GameEngine::GameEngine(void)
 
     // Sprite definitions
     sgbg.SetTexture(hud);
-    sgbg.SetOffset(vec2(0, 0));
-    sgbg.SetSize(vec2(256, 256));
+    sgbg.SetOffset(vec2(0.0f, 0.0f));
+    sgbg.SetSize(vec2(256.0f, 256.0f));
     sgbg.SetPosition(vec2(0.15f, 0.85f));
     sgbg.SetScale(vec2(0.50f, 0.50f));
 
     sgn.SetTexture(hud);
-    sgn.SetOffset(vec2(256, 0));
-    sgn.SetSize(vec2(256, 256));
+    sgn.SetOffset(vec2(256.0f, 0.0f));
+    sgn.SetSize(vec2(256.0f, 256.0f));
     sgn.SetPosition(vec2(0.15f, 0.85f));
     sgn.SetScale(vec2(0.50f, 0.50f));
 
@@ -61,11 +63,6 @@ GameEngine::GameEngine(void)
     EventHandler::AddUpdateable(&phyWorld);
 
     // Init cameras
-    int w, h;
-    SDLHandler::GetWindowSize(w, h);
-    freeCamera.SetAspectRatio(static_cast<float>(w) / static_cast<float>(h));
-    carCamera.SetAspectRatio(static_cast<float>(w) / static_cast<float>(h));
-
     EventHandler::AddEventListener(&carCamera);
     EventHandler::AddUpdateable(&carCamera);
 
@@ -77,7 +74,7 @@ GameEngine::GameEngine(void)
     if (!soundEngine)
         return; // error starting up the engine
 
-    soundEngine->setListenerPosition(vec3df(0, 0, 0), vec3df(0, 0, 1));
+    soundEngine->setListenerPosition(vec3df(0.0f, 0.0f, 0.0f), vec3df(0.0f, 0.0f, 1.0f));
     zvukMotora = soundEngine->play3D("../Resources/Sounds/zvukMotora.ogg", vec3df(0.f, 0.f, 0.f), true, false, true);
     skripanje = soundEngine->play3D("../Resources/Sounds/skripanje.ogg", vec3df(0.f, 0.f, 0.f), true, true, true);
     zavrsetakSkripanja = soundEngine->addSoundSourceFromFile("../Resources/Sounds/zavrsetakSkripanja.ogg");
@@ -91,7 +88,6 @@ GameEngine::GameEngine(void)
 
 void GameEngine::RenderingLoop()
 {
-    float brzinaSada = 0.f, brzinaPrije = 0.f, speedLimit = 0.f;
     bool skripiOdPrije = false;
 
     // Game loop
@@ -103,8 +99,6 @@ void GameEngine::RenderingLoop()
         r.Clear();
 
         // Physics
-        static float a = 0.0f;
-        a += 0.001f;
         car.GetPartTransform(CarPart::CAR_BODY) = phyWorld.GetCar().GetTransform();
         car.GetPartTransform(CarPart::CAR_LF_TIRE) = phyWorld.GetChassis().GetWheelTransform_frontLeft();
         car.GetPartTransform(CarPart::CAR_RF_TIRE) = phyWorld.GetChassis().GetWheelTransform_frontRight();
@@ -117,7 +111,7 @@ void GameEngine::RenderingLoop()
             speed = 160.0f;
         if(speed < 0.0f)
             speed = 0.0f;
-        sgn.SetAngle(-120.0f + 240.0f*speed / 160.0f);
+        sgn.SetAngle(-120.0f + 240.0f * speed / 160.0f);
 
         // Display
         r.Render();
@@ -132,11 +126,11 @@ void GameEngine::RenderingLoop()
         const vec3df listenerPositionVec3df(*(vec3df*)&camera->cam.position);
         const vec3df listenerDirectionVec3df(*(vec3df*)&camera->cam.GetDirection());
         const vec3df listenerUpVec3df(*(vec3df*)&camera->cam.GetUp());
-        soundEngine->setListenerPosition(listenerPositionVec3df, listenerDirectionVec3df, vec3df(0, 0, 0), listenerUpVec3df);
+        soundEngine->setListenerPosition(listenerPositionVec3df, listenerDirectionVec3df, vec3df(0.0f, 0.0f, 0.0f), listenerUpVec3df);
 
         // Adjust engine sound
-        speedLimit = phyWorld.getSpeedLimit();
-        brzinaSada = speed;
+        float speedLimit = phyWorld.getSpeedLimit();
+        float brzinaSada = speed;
         zvukMotora->setPlaybackSpeed(brzinaSada / speedLimit + 1.0f);
 
         // Set position of engine sound
@@ -145,7 +139,7 @@ void GameEngine::RenderingLoop()
 
         // Set screeching tires
         skripanje->setPosition(carPositionVec3df);
-        if (phyWorld.isTurning() && (speed/20 > 0.76)) {
+        if (phyWorld.isTurning() && (speed / 20.0f > 0.76f)) {
             if (!skripiOdPrije) {
                 skripanje->setIsPaused(false);
                 skripiOdPrije = true;

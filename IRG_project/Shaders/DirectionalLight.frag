@@ -5,7 +5,7 @@ in vec3 varyingNormalDirection;  // surface normal vector in world space
 in vec2 UV;  // surface normal vector in world space
 
 // Ouput data
-out vec3 color;
+layout(location = 0) out vec3 color;
 
 uniform mat4 invV;
  

@@ -4,6 +4,7 @@
 
 #include <Engine/Core/SDLHandler.h>
 #include "GameEngine.h"
+#include "GraphicsSettings.h"
 
 using namespace engine;
 using namespace engine_physics;
@@ -13,15 +14,17 @@ using namespace irrklang;
 
 int main(int argc, char *argv[])
 {
+    GraphicsSettings::Init("../Resources/GraphicsSettings.txt");
+
     SDLHandler::Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 
     SDLHandler::CreateWindow(
-        "Test",                    // window title
-        SDL_WINDOWPOS_UNDEFINED,   // initial x position
-        SDL_WINDOWPOS_UNDEFINED,   // initial y position
-        1280,                       // width, in pixels
-        720,                       // height, in pixels
-        SDL_WINDOW_OPENGL |        // flags
+        "Test",                         // window title
+        SDL_WINDOWPOS_UNDEFINED,        // initial x position
+        SDL_WINDOWPOS_UNDEFINED,        // initial y position
+        GraphicsSettings::windowWidth,  // width, in pixels
+        GraphicsSettings::windowHeight, // height, in pixels
+        SDL_WINDOW_OPENGL |             // flags
         SDL_WINDOW_RESIZABLE |
         SDL_WINDOW_SHOWN           
         );
@@ -31,6 +34,7 @@ int main(int argc, char *argv[])
 
     GameEngine gameEngine;
     gameEngine.RenderingLoop();
+    gameEngine.CleanUp();
 
     SDLHandler::CleanUp();
     return 0;
