@@ -28,8 +28,8 @@ Key bindings:
     - 1/2/3/4: switch gears
 
 
-You can 'draw' the track in ../Resources/TrackDescription.txt. First two number represent height and width of the track.
-Than there is height * width grid of characters representing the track. Meaning of each character:
+You can 'draw' the track in ../Resources/TrackDescription.txt. First two numbers represent height and width of the track.
+Then there is height * width grid of characters representing the track. Meaning of each character:
     - '.' this grid cell is empty
     - 'R' there is a road segment on this grid cell
     - 'C' there is a road segment on this grid cell, and it is the cars starting point

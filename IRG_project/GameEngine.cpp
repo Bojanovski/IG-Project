@@ -14,7 +14,8 @@ GameEngine::GameEngine(void)
     : 
     isCameraFree(false),
     freeCamera(Camera(vec3(3.0f, 0.5f, -5.0f), (float)GraphicsSettings::windowWidth / (float)GraphicsSettings::windowHeight, GraphicsSettings::FOV), 4.0f, 0.0025f),
-    carCamera(Camera(vec3(3.0f, 0.5f, -5.0f), (float)GraphicsSettings::windowWidth / (float)GraphicsSettings::windowHeight, GraphicsSettings::FOV), &phyWorld.GetChassis())
+    carCamera(Camera(vec3(3.0f, 0.5f, -5.0f), (float)GraphicsSettings::windowWidth / (float)GraphicsSettings::windowHeight, GraphicsSettings::FOV), &phyWorld.GetChassis()),
+    postProcess(GraphicsSettings::windowWidth, GraphicsSettings::windowHeight)
 {
     EventHandler::AddEventListener(this);
 
@@ -64,6 +65,7 @@ GameEngine::GameEngine(void)
 
     // Init cameras
     EventHandler::AddEventListener(&carCamera);
+    EventHandler::AddEventListener(&freeCamera);
     EventHandler::AddUpdateable(&carCamera);
 
     r.SetCamera(&carCamera);
@@ -84,6 +86,7 @@ GameEngine::GameEngine(void)
     skripanje->setMinDistance(2.0f);
     zavrsetakSkripanja->setDefaultMinDistance(2.0f);
 
+    postProcess.Init();
 }
 
 void GameEngine::RenderingLoop()
@@ -94,9 +97,6 @@ void GameEngine::RenderingLoop()
     do
     {
         const CameraHandler *camera = r.getCameraHandler();
-
-        // Clear the screen
-        r.Clear();
 
         // Physics
         car.GetPartTransform(CarPart::CAR_BODY) = phyWorld.GetCar().GetTransform();
@@ -114,7 +114,12 @@ void GameEngine::RenderingLoop()
         sgn.SetAngle(-120.0f + 240.0f * speed / 160.0f);
 
         // Display
+        postProcess.SetAsRenderTarget();
+        r.Clear();
         r.Render();
+        postProcess.DrawToScreen(GraphicsSettings::windowWidth, GraphicsSettings::windowHeight);
+
+
         SDLHandler::SwapBuffers();
 
         // Handle events
@@ -163,6 +168,7 @@ void GameEngine::CleanUp()
     car.GetModel().CleanUp();
     rt.CleanUp();
     soundEngine->drop(); // delete engine
+    postProcess.CleanUp();
 }
 
 void GameEngine::HandleEvent(const SDL_Event &e)
@@ -171,17 +177,13 @@ void GameEngine::HandleEvent(const SDL_Event &e)
     {
         if(isCameraFree)
         {
-            EventHandler::RemoveEventListener(&freeCamera);
             EventHandler::RemoveUpdateable(&freeCamera);
-            EventHandler::AddEventListener(&carCamera);
             EventHandler::AddUpdateable(&carCamera);
             r.SetCamera(&carCamera);
         }
         else
         {
-            EventHandler::RemoveEventListener(&carCamera);
             EventHandler::RemoveUpdateable(&carCamera);
-            EventHandler::AddEventListener(&freeCamera);
             EventHandler::AddUpdateable(&freeCamera);
             r.SetCamera(&freeCamera);
 
@@ -191,6 +193,12 @@ void GameEngine::HandleEvent(const SDL_Event &e)
             freeCamera.cam.ComputeView();
         }
         isCameraFree = !isCameraFree;
+    }
+    else if(e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_RESIZED)
+    {
+        GraphicsSettings::windowWidth = e.window.data1;
+        GraphicsSettings::windowHeight = e.window.data2;
+        postProcess.Resize(GraphicsSettings::windowWidth, GraphicsSettings::windowHeight);
     }
 }
 

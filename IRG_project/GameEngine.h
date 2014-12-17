@@ -8,6 +8,7 @@
 #include "Car.h"
 #include "CarCameraHandler.h"
 #include "RacingTrack.h"
+#include "PostProcessAA.h"
 
 
 class GameEngine
@@ -34,6 +35,7 @@ private:
     CarModel car;
     engine::DefaultCameraHandler freeCamera;
     CarCameraHandler carCamera;
+    PostProcessAA postProcess;
 
     //physics
     engine_physics::World phyWorld;

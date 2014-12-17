@@ -4,6 +4,7 @@ project(IRG_project)
 set(IRG_project_SRCS
     Main.cpp
     GameEngine.cpp
+    PostProcessAA.cpp
     Car.cpp
     RacingTrack.cpp
     CarCameraHandler.cpp
@@ -14,6 +15,7 @@ set(IRG_project_SRCS
 set(IRG_project_HDRS
     Car.h
     GameEngine.h
+    PostProcessAA.h
     RacingTrack.h
     CarCameraHandler.h
     GraphicsSettings.h
