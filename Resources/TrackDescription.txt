@@ -1,6 +1,6 @@
 4
-5
-RRR..
-R.RRR
-R...R
-RCRRR
+10
+RRR..RRRRR
+R.RRRR...R
+RR.....RRR
+.RRRCRRR..

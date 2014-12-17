@@ -16,7 +16,10 @@ namespace engine_physics
 		CarRigidBody(float width, float height, float length, float density);
 		~CarRigidBody();
 		
-		const glm::mat4 &GetTransform() const { return mM; }
+        const glm::mat4 &GetTransform() const { return mM; }
+        const glm::vec3 &GetPos() const { return mPos; }
+        const glm::vec3 &GetLinVel() const { return mLinVel; }
+        const glm::vec3 &GetLinAcc() const { return mLinAcc; }
 
 	private:
 		void Integrate(float dt);

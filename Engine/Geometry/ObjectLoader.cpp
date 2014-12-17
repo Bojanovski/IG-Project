@@ -286,7 +286,7 @@ namespace engine
                     vertexIndices.push_back(vertexIndex[0]);
                     vertexIndices.push_back(vertexIndex[1]);
                     vertexIndices.push_back(vertexIndex[2]);
-                    cout << "NO normlas" << endl;
+                    cerr << "NO normals" << endl;
                     return false;
                 }
             }

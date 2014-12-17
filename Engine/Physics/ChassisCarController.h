@@ -18,13 +18,16 @@ namespace engine_physics
 		const glm::mat4 &GetWheelTransform_frontLeft() const { return mM_frontLeft; }
 		const glm::mat4 &GetWheelTransform_frontRight() const { return mM_frontRight; }
 		const glm::mat4 &GetWheelTransform_backLeft() const { return mM_backLeft; }
-		const glm::mat4 &GetWheelTransform_backRight() const { return mM_backRight; }
+        const glm::mat4 &GetWheelTransform_backRight() const { return mM_backRight; }
+
+        float GetYRot() const { return mYRot; }
+        const glm::vec3& GetPos() const { return mPos; }
+        const CarRigidBody* GetCar() const { return mCar; }
 
 	private:
 		void UpdateTransformationMatrices();
 		void Update(float dt);
 		void AddToPosition(glm::vec3 v);
-		float GetYRot() { return mYRot; }
 		void  AddToYRot(float yRot) { mYRot += yRot; }
 		void SetSteering(float yRot) { mYSteeringRot = yRot; }
 

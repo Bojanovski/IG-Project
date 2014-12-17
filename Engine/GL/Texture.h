@@ -18,6 +18,8 @@ namespace engine
 
         void LoadFromFile(const char *filename, GLenum _target = GL_TEXTURE_2D, bool flip = true);
         void LoadDefault(const glm::vec4 &color);
+        //possible resize
+        void LoadEmpty(GLsizei width, GLsizei height, GLint internalFormat, GLenum format);
         void Destroy();
 
         void GenerateMipmaps() const;
@@ -27,15 +29,16 @@ namespace engine
         void TexParamIiv(GLenum paramName, const GLint *param) const;
         void TexParamfv(GLenum paramName, const GLfloat *param) const;
 
-		int GetWidth();
-		int GetHeight();
+		GLsizei GetWidth() const;
+		GLsizei GetHeight() const;
+        GLuint GetID() const;
 
     private:
         GLuint ID;
         GLenum target;
 
-		int width;
-		int height;
+		GLsizei width;
+		GLsizei height;
     };
 }
 

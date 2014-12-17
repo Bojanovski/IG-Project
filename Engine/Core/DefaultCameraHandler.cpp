@@ -11,7 +11,7 @@ using namespace glm;
 namespace engine
 {
     DefaultCameraHandler::DefaultCameraHandler(const Camera &cam, float speed, float rotationSpeed) :
-        CameraHandler(cam), speed(speed), rotationSpeed(rotationSpeed), springiness(100), dx(0), dy(0), near(0.1f), far(1000.0f)
+        CameraHandler(cam), speed(speed), rotationSpeed(rotationSpeed), springiness(100), dx(0), dy(0)
     {
         this->cam.ComputeView();
         this->cam.ComputeProjection(near, far);
@@ -92,7 +92,7 @@ namespace engine
 
     void DefaultCameraHandler::WindowResize(const SDL_WindowEvent &e)
     {
-        if(e.windowID == SDL_WINDOWEVENT_RESIZED)
+        if(e.event == SDL_WINDOWEVENT_RESIZED)
         {
             cam.aspectRatio = static_cast<float>(e.data1) / static_cast<float>(e.data2);
             cam.ComputeProjection(near, far);

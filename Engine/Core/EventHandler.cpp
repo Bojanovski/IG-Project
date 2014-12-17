@@ -38,9 +38,12 @@ namespace engine
             else if(test_event.type == SDL_MOUSEMOTION && isCursorFree == false)
                 continue;
 
-            for(EventListener *listener : listenerList)
+            for(int i = 0; i < listenerList.size(); ++i)
+            {
+                EventListener *listener = listenerList[i];
                 if(listener->active)
                     listener->HandleEvent(test_event);
+            }
         }
     }
 
@@ -51,7 +54,7 @@ namespace engine
 
     void EventHandler::RemoveEventListener(const EventListener *listener)
     {
-        //TODO_JURE finish
+        listenerList.erase(find(listenerList.begin(), listenerList.end(), listener));
     }
 
     bool EventHandler::Quit()
@@ -79,6 +82,6 @@ namespace engine
 
     void EventHandler::RemoveUpdateable(const Updateable *updateable)
     {
-        //TODO_JURE finish
+        updateableList.erase(find(updateableList.begin(), updateableList.end(), updateable));
     }
 }

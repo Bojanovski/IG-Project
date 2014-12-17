@@ -18,11 +18,15 @@ namespace engine
         CameraHandler(const Camera &cam);
         virtual ~CameraHandler(void);
 
+        void SetAspectRatio(float asRatio);
+
         virtual const glm::mat4& GetProjectionMatrix() const = 0;
         virtual const glm::mat4& GetViewMatrix() const = 0;
         const glm::vec3& GetPosition() const;
 
         Camera cam;
+    protected:
+        float far, near;
     };
 }
 

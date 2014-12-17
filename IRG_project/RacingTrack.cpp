@@ -68,7 +68,6 @@ int RacingTrackDescription::Height() const
 
 RacingTrack::RacingTrack(void)
 {
-    const mat4 I(1.0f);
     const vec3 j(0.0f, 1.0f, 0.0f);
     rotations[0] = rotate(I, 0.0f, j);
     rotations[1] = rotate(I, 90.0f, j);
@@ -232,24 +231,24 @@ void RacingTrack::CleanUp()
 
 void RacingTrack::PlaceRoadBlocks(bool straight, const mat4& T)
 {
-    const mat4 I(1.0f);
-    if(straight)
-    {
-        const int ctBlocks = static_cast<int>(straightRoadX / roadBlockX + 0.5f);
+    //No roadblocks for now
+    //if(straight)
+    //{
+    //    const int ctBlocks = static_cast<int>(straightRoadX / roadBlockX + 0.5f);
 
-        for(int i = 0; i < ctBlocks; ++i)
-        {
-            const float offsetX = (static_cast<float>(-ctBlocks / 2 + 1 + i) - 0.5f) * roadBlockX;
+    //    for(int i = 0; i < ctBlocks; ++i)
+    //    {
+    //        const float offsetX = (static_cast<float>(-ctBlocks / 2 + 1 + i) - 0.5f) * roadBlockX;
 
-            const float offsetZ1 = straightRoadZ * 0.5f;
-            const float offsetZ2 = -offsetZ1;
+    //        const float offsetZ1 = straightRoadZ * 0.5f;
+    //        const float offsetZ2 = -offsetZ1;
 
-            roadBlock.transforms.push_back(T * translate(I, vec3(offsetX, 0.0f, offsetZ1)));
-            roadBlock.transforms.push_back(T * translate(I, vec3(offsetX, 0.0f, offsetZ2)));
-        }
-    }
-    else
-    {
-        //TODO roadblocks for turns 
-    }
+    //        roadBlock.transforms.push_back(T * translate(I, vec3(offsetX, 0.0f, offsetZ1)));
+    //        roadBlock.transforms.push_back(T * translate(I, vec3(offsetX, 0.0f, offsetZ2)));
+    //    }
+    //}
+    //else
+    //{
+    //    //TODO roadblocks for turns 
+    //}
 }
