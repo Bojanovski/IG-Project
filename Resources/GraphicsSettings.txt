@@ -7,5 +7,6 @@
 //0/1 == on/off
 #FXAA 1
 //window resolution is multiplied by this
-//to get the frame resolution
-#resolutionScale 1.0
+//to get the frame buffer resolution
+//if resolutionScale > 1.0, FXAA won't be applied
+#resolutionScale 2.0
