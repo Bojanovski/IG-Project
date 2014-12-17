@@ -1,36 +1,29 @@
 #ifndef ACG_GAMEENGINE_H
 #define ACG_GAMEENGINE_H
 
-#include <iostream>
-#include <ctime>
-#include <GL/glew.h>
-#include <Engine/Engine.h>
-#include <Engine/Common/ErrorCheck.h>
-#include <glm\glm.hpp>
-#include <glm\gtc\matrix_transform.hpp>
+#include <Engine/Core/Renderer.h>
+#include <Engine/Core/DefaultCameraHandler.h>
+#include <Engine/Physics/World.h>
+#include <irrKlang.h>
 #include "Car.h"
 #include "CarCameraHandler.h"
 #include "RacingTrack.h"
-#include <Engine\Physics\World.h>
 
-#include "RacingTrack.h"
-#include <Engine/Geometry/ObjectLoader.h>
-
-#include <irrKlang.h>
 
 class GameEngine
+    : public engine::EventListener
 {
 public:
     GameEngine(void);
-    ~GameEngine(void);
 
-    void Init();
-    void CleanUp();
     void RenderingLoop();
+    void CleanUp();
+    void HandleEvent(const SDL_Event &e);
 
 private:
-    engine::Renderer r;
+    bool isCameraFree;
 
+    engine::Renderer r;
     //2D
     engine::Texture hud;
     engine::Sprite sgbg; // Speed gauge background
@@ -39,6 +32,8 @@ private:
     //3D
     RacingTrack rt;
     CarModel car;
+    engine::DefaultCameraHandler freeCamera;
+    CarCameraHandler carCamera;
 
     //physics
     engine_physics::World phyWorld;
@@ -48,8 +43,6 @@ private:
     irrklang::ISound* zvukMotora;
     irrklang::ISound* skripanje;
     irrklang::ISoundSource* zavrsetakSkripanja;
-
-
 };
 
 #endif

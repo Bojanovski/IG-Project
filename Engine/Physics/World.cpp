@@ -143,7 +143,7 @@ void World::Update(float dt)
 		}
 	}
 
-	mChassis.Update(dt);
+	mChassis.Update();
 	//mCar.AddForceAtPoint(-mGravitiy, vec3(1.0f, 0.0f, 0.0f));
 	//mCar.AddTorque(vec3(0.0f, 1.0f, 0.0f));
 	mCar.AddForce(mGravitiy);

@@ -36,8 +36,6 @@ private:
     glm::vec3 dir;
     float springiness;
     float dx, dy;
-
-    float far, near;
 };
 
 #endif
