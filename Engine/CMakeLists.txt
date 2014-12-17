@@ -116,4 +116,5 @@ target_link_libraries(Engine
     ${OPENGL_LIBRARIES}
     ${IL_LIBRARIES}
     ${ILU_LIBRARIES}
+	${LEAPMOTION_LIBRARIES}
 )

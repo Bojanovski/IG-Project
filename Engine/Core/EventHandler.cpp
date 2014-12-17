@@ -4,6 +4,7 @@
 
 #include <Engine/Core/EventHandler.h>
 #include "SDL.h"
+#include "Leap.h"
 
 using namespace std;
 
@@ -14,7 +15,33 @@ namespace engine
     bool EventHandler::quit = false;
     bool EventHandler::isCursorFree = true;
     float EventHandler::timeStep = 1.0f / 60.0f;
-    float EventHandler::accumulator = 0.0f;
+	float EventHandler::accumulator = 0.0f;
+
+	Leap::Controller EventHandler::leap;
+
+	struct VirtualKey {
+		VirtualKey(int key) :
+		key(key), state(0) {}
+
+		void set(bool newState) {
+			if(newState != state) {
+				state = newState;
+				SDL_KeyboardEvent ke;
+				ke.keysym.sym = key;
+				ke.repeat = 0;
+				ke.state = state ? SDL_PRESSED : SDL_RELEASED;
+				ke.type = state ? SDL_KEYDOWN : SDL_KEYUP;
+				SDL_Event e;
+				e.key = ke;
+				for(EventListener *listener : EventHandler::listenerList)
+				if(listener->active)
+					listener->HandleEvent(e);
+			}
+		}
+
+		bool state;
+		int key;
+	};
 
     void EventHandler::ProcessPolledEvents()
     {
@@ -42,6 +69,32 @@ namespace engine
                 if(listener->active)
                     listener->HandleEvent(test_event);
         }
+
+		static VirtualKey l(SDLK_j), r(SDLK_l), f(SDLK_i), b(SDLK_k);
+
+		Leap::HandList hands = leap.frame().hands();
+		if(!hands.isEmpty()) {
+			Leap::Hand hand = hands[0];
+			Leap::Vector pn = hand.palmNormal();
+			if(pn.y > -0.7) {
+				r.set(pn.x > 0.6);
+				f.set(pn.z < -0.2);
+				l.set(pn.x < -0.6);
+				b.set(pn.z > 0.3);
+			}
+			else {
+				r.set(0);
+				f.set(0);
+				l.set(0);
+				b.set(0);
+			}
+		}
+		else {
+			r.set(0);
+			f.set(0);
+			l.set(0);
+			b.set(0);
+		}
     }
 
     void EventHandler::AddEventListener(EventListener *listener)
