@@ -40,11 +40,18 @@ public:
     const engine::InstancedModel* GetRoadBlock() const;
 
 private:
+    void PlaceRoadBlocks(bool straight, const glm::mat4& T);
+
     engine::InstancedModel straightRoad;
     engine::InstancedModel turnRoad;
     engine::InstancedModel roadBlock;
 
     float roadTileDim;
+
+    float straightRoadX, straightRoadZ;
+    float roadBlockX, roadBlockZ;
+    float turnRoadX, turnRoadZ;
+
     glm::mat4 rotations[4];
 };
 

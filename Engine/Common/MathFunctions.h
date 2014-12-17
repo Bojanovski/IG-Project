@@ -12,6 +12,8 @@ namespace engine
     const float PI = 3.14159165359f;
     const float HALF_PI = PI / 2.0f;
     const float EPS = 0.001f;
+    const glm::mat4 I(1.0f);
+    const glm::mat4 O(0.0f);
 
     template<class T>
     float Clamp(T x, T a, T b);

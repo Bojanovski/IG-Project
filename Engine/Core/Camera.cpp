@@ -45,6 +45,12 @@ namespace engine
         return view;
     }
 
+    void Camera::SetDirection(const glm::vec3 &direction)
+    {
+        phiy = asinf(direction.y);
+        phix = asinf(direction.x / cosf(phiy));
+    }
+
     vec3 Camera::GetDirection() const
     {
         return vec3(
@@ -80,6 +86,4 @@ namespace engine
     {
         projection = perspective(FoV, aspectRatio, near, far);
     }
-
-
 }

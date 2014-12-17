@@ -14,12 +14,10 @@ using namespace std;
 namespace engine
 {
 	Renderer::Renderer(void)
-        : _2Dprogram("Shaders/sprite"), _3Dprogram("Shaders/DirectionalLight"), _3DprogramInstanced(VertexShader("Shaders/DirectionalLightInstanced"), FragmentShader("Shaders/DirectionalLight")),
-        _camera(Camera(vec3(3.0f, 0.5f, -5.0f), 4.0f / 3.0f, 60.0f), 4.0f, 0.0025f)
+        : _2Dprogram("Shaders/sprite"), _3Dprogram("Shaders/DirectionalLight"), 
+        _3DprogramInstanced(VertexShader("Shaders/DirectionalLightInstanced"), FragmentShader("Shaders/DirectionalLight")), 
+        sceneAmbient(0.1f, 0.1f, 0.1f)
 	{
-        EventHandler::AddEventListener(&_camera);
-        EventHandler::AddUpdateable(&_camera);
-
 		// Create a quad for sprite rendering
 		static const GLfloat _quad[8] = {
 		0.0f,  0.0f,
@@ -53,13 +51,15 @@ namespace engine
 		GLCheckStmt(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)sizeof(_quad)));
 
         _3Dprogram.Use();
-        _3Dprogram.SetUniform("lightDirection", normalize(vec3(0.0f, 1.0f, -1.0f)));
+        _3Dprogram.SetUniform("lightDirection", normalize(vec3(-1.0f, 0.9f, 1.0f)));
         _3Dprogram.SetUniform("lightIntensity", vec3(1.0f, 1.0f, 1.0f));
+        _3Dprogram.SetUniform("scene_ambient", sceneAmbient);
         _3Dprogram.SetUniform("textureSampler", 1);
 
         _3DprogramInstanced.Use();
-        _3DprogramInstanced.SetUniform("lightDirection", normalize(vec3(0.0f, 1.0f, -1.0f)));
+        _3DprogramInstanced.SetUniform("lightDirection", normalize(vec3(-1.0f, 0.9f, 1.0f)));
         _3DprogramInstanced.SetUniform("lightIntensity", vec3(1.0f, 1.0f, 1.0f));
+        _3DprogramInstanced.SetUniform("scene_ambient", sceneAmbient);
         _3DprogramInstanced.SetUniform("textureSampler", 1);
 
 		// Load 2d shader
@@ -89,7 +89,7 @@ namespace engine
 
 	void Renderer::Render()
 	{
-        skybox.Draw(_camera.cam.GetProjectionMatrix() * _camera.cam.GetViewMatrix());
+        skybox.Draw(camera->cam.GetProjectionMatrix() * camera->cam.GetViewMatrix());
 
 		for (const Model* model : models)
 			RenderModel(model);
@@ -155,8 +155,8 @@ namespace engine
         glActiveTexture(GL_TEXTURE1);
         _3Dprogram.Use();
 
-        const mat4 &V = _camera.cam.GetViewMatrix();
-        const mat4 &VP = _camera.cam.GetProjectionMatrix() * V;
+        const mat4 &V = camera->cam.GetViewMatrix();
+        const mat4 &VP = camera->cam.GetProjectionMatrix() * V;
 
         int i = 0;
         for(const TriangleMesh &mesh : model->meshes)
@@ -185,8 +185,8 @@ namespace engine
         glActiveTexture(GL_TEXTURE1);
         _3DprogramInstanced.Use();
 
-        const mat4 &V = _camera.cam.GetViewMatrix();
-        const mat4 &VP = _camera.cam.GetProjectionMatrix() * V;
+        const mat4 &V = camera->cam.GetViewMatrix();
+        const mat4 &VP = camera->cam.GetProjectionMatrix() * V;
 
         int i = 0;
         for(const TriangleMesh &mesh : model->meshes)

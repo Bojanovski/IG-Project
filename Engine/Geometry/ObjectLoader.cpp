@@ -286,7 +286,7 @@ namespace engine
                     vertexIndices.push_back(vertexIndex[0]);
                     vertexIndices.push_back(vertexIndex[1]);
                     vertexIndices.push_back(vertexIndex[2]);
-                    cout << "NO normlas" << endl;
+                    cerr << "NO normals" << endl;
                     return false;
                 }
             }
@@ -294,7 +294,7 @@ namespace engine
 
         //load default tex if model doesnt have one
         if(!mat.diffuse_tex.isAlive())
-            mat.diffuse_tex.LoadDefault();
+            mat.diffuse_tex.LoadDefault(mat.diffuseColor);
 
         //unwrap the indexing
         vector<Vertex> outVertices;

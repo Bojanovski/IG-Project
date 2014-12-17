@@ -5,18 +5,21 @@ in vec3 varyingNormalDirection;  // surface normal vector in world space
 in vec2 UV;  // surface normal vector in world space
 
 // Ouput data
-out vec3 color;
+layout(location = 0) out vec3 color;
 
 uniform mat4 invV;
  
+//Matrial
 uniform vec3 ambient;
 uniform vec3 diffuse;
 uniform vec3 specular;
 uniform float shininess;
+uniform sampler2D textureSampler;
 
+//Scene
 uniform vec3 lightDirection;
 uniform vec3 lightIntensity;
-uniform sampler2D textureSampler;
+uniform vec3 scene_ambient;
 
 void main()
 {
@@ -24,11 +27,12 @@ void main()
     vec3 viewDirection = normalize(vec3(invV * vec4(0.0, 0.0, 0.0, 1.0) - position));
 
     float dotNL = dot(normalDirection, lightDirection);
+    vec3 sample_color = texture(textureSampler, UV).rgb;
     
-    color = ambient;
+    color = (ambient + scene_ambient) * sample_color;
     if(dotNL > 0.0)
     {
-        vec3 diffuseReflection =  diffuse * dotNL * texture(textureSampler, UV).rgb;
+        vec3 diffuseReflection = diffuse * dotNL * sample_color;
         vec3 specularReflection = specular * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), shininess);
         color += lightIntensity * (diffuseReflection + specularReflection);
     }

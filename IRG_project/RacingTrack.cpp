@@ -68,7 +68,6 @@ int RacingTrackDescription::Height() const
 
 RacingTrack::RacingTrack(void)
 {
-    const mat4 I(1.0f);
     const vec3 j(0.0f, 1.0f, 0.0f);
     rotations[0] = rotate(I, 0.0f, j);
     rotations[1] = rotate(I, 90.0f, j);
@@ -112,6 +111,14 @@ void RacingTrack::LoadModels(const string &path, const string &straightfn, const
     mat3.diffuse_tex.TexParami(GL_TEXTURE_WRAP_S, GL_REPEAT);
 
     roadTileDim = straightRoad.meshes[0].GetMaxDim();
+    turnRoadZ = turnRoad.meshes[0].GetDepth();
+    turnRoadX = turnRoad.meshes[0].GetWidth();
+
+    roadBlockZ = roadBlock.meshes[0].GetDepth();
+    roadBlockX = roadBlock.meshes[0].GetWidth();
+
+    straightRoadZ = straightRoad.meshes[0].GetDepth();
+    straightRoadX = straightRoad.meshes[0].GetWidth();
 }
 
 
@@ -157,20 +164,43 @@ pair<vec2, float> RacingTrack::Create(RacingTrackDescription &rtd)
         {
             if(rtd[i][j] == 'R' || rtd[i][j] == 'C')
             {
-                const mat4 T = translate(mat4(1.0f), vec3((float)i * roadTileDim, 0.0f, (float)j * roadTileDim));
+                const mat4 T = centering * translate(mat4(1.0f), vec3((float)i * roadTileDim, 0.0f, (float)j * roadTileDim));
 
                 if(rtd[i+1][j] == 'R' && rtd[i][j+1] == 'R')
-                    turnRoad.transforms.push_back(centering * T * rotations[2]);
+                {
+                    const mat4 RT = T * rotations[2];
+                    turnRoad.transforms.push_back(RT);
+                    PlaceRoadBlocks(false, RT);
+                }
                 else if(rtd[i+1][j] == 'R' && rtd[i][j-1] == 'R')
-                    turnRoad.transforms.push_back(centering * T * rotations[3]);
+                {
+                    const mat4 RT = T * rotations[3];
+                    turnRoad.transforms.push_back(RT);
+                    PlaceRoadBlocks(false, RT);
+                }
                 else if(rtd[i-1][j] == 'R' && rtd[i][j-1] == 'R')
-                    turnRoad.transforms.push_back(centering * T * rotations[0]);
+                {
+                    const mat4 RT = T * rotations[0];
+                    turnRoad.transforms.push_back(RT);
+                    PlaceRoadBlocks(false, RT);
+                }
                 else if(rtd[i-1][j] == 'R' && rtd[i][j+1] == 'R')
-                    turnRoad.transforms.push_back(centering * T * rotations[1]);
+                {
+                    const mat4 RT = T * rotations[1];
+                    turnRoad.transforms.push_back(RT);
+                    PlaceRoadBlocks(false, RT);
+                }
                 else if(rtd[i][j-1] == 'R' && rtd[i][j+1] == 'R')
-                    straightRoad.transforms.push_back(centering * T * rotations[1]);
+                {
+                    const mat4 RT = T * rotations[1];
+                    straightRoad.transforms.push_back(RT);
+                    PlaceRoadBlocks(true, RT);
+                }
                 else
-                    straightRoad.transforms.push_back(centering * T);
+                {
+                    straightRoad.transforms.push_back(T);
+                    PlaceRoadBlocks(true, T);
+                }
             }
         }
     }
@@ -197,4 +227,28 @@ void RacingTrack::CleanUp()
     straightRoad.CleanUp();
     turnRoad.CleanUp();
     roadBlock.CleanUp();
+}
+
+void RacingTrack::PlaceRoadBlocks(bool straight, const mat4& T)
+{
+    //No roadblocks for now
+    //if(straight)
+    //{
+    //    const int ctBlocks = static_cast<int>(straightRoadX / roadBlockX + 0.5f);
+
+    //    for(int i = 0; i < ctBlocks; ++i)
+    //    {
+    //        const float offsetX = (static_cast<float>(-ctBlocks / 2 + 1 + i) - 0.5f) * roadBlockX;
+
+    //        const float offsetZ1 = straightRoadZ * 0.5f;
+    //        const float offsetZ2 = -offsetZ1;
+
+    //        roadBlock.transforms.push_back(T * translate(I, vec3(offsetX, 0.0f, offsetZ1)));
+    //        roadBlock.transforms.push_back(T * translate(I, vec3(offsetX, 0.0f, offsetZ2)));
+    //    }
+    //}
+    //else
+    //{
+    //    //TODO roadblocks for turns 
+    //}
 }

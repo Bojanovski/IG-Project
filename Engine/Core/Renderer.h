@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <Engine/Core/Camera.h>
-#include <Engine/Core/DefaultCameraHandler.h>
+#include <Engine/Core/CameraHandler.h>
 #include <Engine/Geometry/InstancedModel.h>
 #include <Engine/GL/Program.h>
 #include <Engine/GL/Skybox.h>
@@ -36,12 +36,22 @@ namespace engine
 
         void CleanUp();
 
-		DefaultCameraHandler* getCameraHandler() { return &_camera; }
+        void SetCamera(CameraHandler *cam)
+        {
+            camera = cam;
+        }
+
+		const CameraHandler* getCameraHandler() const
+        {
+            return camera;
+        }
 
 	private:
 		void RenderSprite(const Sprite* sprite);
         void RenderModel(const Model* model);
         void RenderInstancedModel(const InstancedModel* model);
+
+        glm::vec3 sceneAmbient;
 
         //skybox
         Skybox skybox;
@@ -60,7 +70,7 @@ namespace engine
 		// View
 		glm::vec2 _size;
 
-		DefaultCameraHandler _camera;
+        CameraHandler* camera;
 
 		// Sprite rendering stuff
 		GLuint _quad_vao;

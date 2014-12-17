@@ -51,26 +51,49 @@ namespace engine
         {
             GLCheckStmt(glGenTextures(1, &ID));
         }
-        GLCheckStmt(Bind());
-        GLCheckStmt(glTexImage2D(_target, 0, GL_RGBA8, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData()));
 
         width = ilGetInteger(IL_IMAGE_WIDTH);
         height = ilGetInteger(IL_IMAGE_HEIGHT);
 
+        GLCheckStmt(Bind());
+        GLCheckStmt(glTexImage2D(_target, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData()));
+
         ilDeleteImages(1, &imageID);
     }
 
-    void Texture::LoadDefault()
+    void Texture::LoadDefault(const glm::vec4 &color)
     {
         //skip if it already exists
         if(ID)
             return;
 
-        static const GLubyte white[] = {255, 255, 255, 255};
+        width = 1;
+        height = 1;
+
+        static const GLubyte white[4] =
+        {
+            static_cast<GLubyte>(color.r * 255.0f),
+            static_cast<GLubyte>(color.g * 255.0f),
+            static_cast<GLubyte>(color.b * 255.0f),
+            static_cast<GLubyte>(color.a * 255.0f)
+        };
 
         GLCheckStmt(glGenTextures(1, &ID));
         GLCheckStmt(Bind());
-        GLCheckStmt(glTexImage2D(target, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, white));
+        GLCheckStmt(glTexImage2D(target, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, white));
+    }
+
+    void Texture::LoadEmpty(GLsizei width, GLsizei height, GLint internalFormat, GLenum format)
+    {
+        this->width = width;
+        this->height = height;
+
+        if(ID == 0)
+        {
+            GLCheckStmt(glGenTextures(1, &ID));
+        }
+        GLCheckStmt(Bind());
+        GLCheckStmt(glTexImage2D(target, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, 0));
     }
 
     void Texture::UnBind() const
@@ -87,7 +110,6 @@ namespace engine
     {
         glGenerateMipmap(target);
     }
-
 
     void Texture::TexParami(GLenum paramName, GLuint param) const
     {
@@ -116,16 +138,17 @@ namespace engine
 
     void Texture::Destroy()
     {
-        glDeleteTextures(1, &ID);
+        if(ID)
+            glDeleteTextures(1, &ID);
         ID = 0;
     }
 
-    int Texture::GetWidth()
+    GLsizei Texture::GetWidth() const
     {
         return width;
     }
 
-    int Texture::GetHeight()
+    GLsizei Texture::GetHeight() const 
     {
         return height;
     }
@@ -133,6 +156,11 @@ namespace engine
     bool Texture::isAlive() const
     {
         return ID > 0;
+    }
+
+    GLuint Texture::GetID() const
+    {
+        return ID;
     }
 
 };

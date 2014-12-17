@@ -1,28 +1,38 @@
+Alternatively controlled car game.
 
-***Sve library-e uzmite 32 bitne, i u Cmake-u buildajte 32 bitni projekt***
+Controlled via mose/keyboard and Leap Motion.
 
-Sta treba instalirat:
+Made by:
+Bojan Lovrovic
+    -Team leader
+    -Physics
+Branimir Klaric
+    -Sound
+Bruno Pregun
+    -2D graphics
+    -Modeling
+Igor Kramaric
+    -Model loading
+Jure Ratkovic
+    -3D graphics
+Tomislav Tunkovic
+    -Marketing and PR
 
-- C++11 compiler i IDE (preporucam Visual Studio 2012 ili 2013)
-- SDL2 library: https://www.libsdl.org/download-2.0.php
-- glew library: http://glew.sourceforge.net/
-- DevIL: http://openil.sourceforge.net/
-- irrKlang: http://www.ambiera.com/irrklang/downloads.html
-- OpenGL 3.3+ (ovo vjerojatno imate)
-- Cmake: http://www.cmake.org/
 
-Kako buildat:
+Key bindings:
+    - C :switch between car and free camera
+    - W/A/S/D/Q/E + mouse: move the free camera
+    - 9/0: speed up/down the free camera
+    
+    - I/J/K/L: control car
+    - 1/2/3/4: switch gears
 
-1. Instalirate sve ovo gore
-2. Napravite environment varijablu SDL2DIR koja pokazuje na root SDL2 direktorija
-3. Napravite environment varijablu GLEW_HOME koja pokazuje na root GLEW direktorija
-3. Napravite environment varijablu IRRKLANG_HOME koja pokazuje na root irrKlang direktorija
-4. Stavite put do glew32.dll, sdl2.dll i irrKlang dllova u PATH (ili ih metnete u system folder od windowsa)
-5. Stavite put do DevIL direktorija u path
-6. Pokrenete CMake gui i u "Where is the source code" metnete path do ovog direktorija.
-   U "Where to build the binaries" metnete gdje vec ocete da se napravi projekt.
-   Zatim stisnete dole Configure, pa vas pite za koj IDE i kompajler da napravi projekt, odaberite sto hocete/imate.
-   Zatim stisnete Generate, i kad zavrsi gotovi ste.
-7. Pokrenite projekt i buildajte!
 
-Ako ima problema vicite.
+You can 'draw' the track in ../Resources/TrackDescription.txt. First two numbers represent height and width of the track.
+Then there is height * width grid of characters representing the track. Meaning of each character:
+    - '.' this grid cell is empty
+    - 'R' there is a road segment on this grid cell
+    - 'C' there is a road segment on this grid cell, and it is the cars starting point
+
+
+You can edit the graphics settings in ../Resources/GraphicsSettings.txt
