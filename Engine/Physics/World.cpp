@@ -39,7 +39,7 @@ World::~World()
 
 void World::Initialize(const vec2 &carPos, float carYRot)
 {
-	float elevation = 0.7f;
+	float elevation = 0.8f;
 	mCar.mPos = vec3(carPos.x, elevation, carPos.y);
 	mCar.UpdateTransformationMatrix();
 	mCar.UpdateTransformationMatrix(); // two times for "_previous" data
@@ -79,7 +79,8 @@ void World::AddTurnRoads(std::vector<glm::mat4> &tRoads)
 float World::CalcualteElevationAtPoint(float x, float z)
 {
 	vec3 p4 = vec3(x, 0.0f, z);
-	float elevation = 0.0f;
+	float elevation = 0.25f;
+	float slopeWidth = 1.0f;
 	// straight roads
 	for (unsigned int i = 0; i < mSRoads.size(); ++i)
 	{
@@ -90,8 +91,8 @@ float World::CalcualteElevationAtPoint(float x, float z)
 		float proj = dot(pDir, towardsP); // this is also the distance from line that goes through road segment
 		float projOnRoad = dot(pDir, roadDir);
 		if (abs(projOnRoad) > StraightRoad::mHalfLength) continue;
-		if (abs(proj) > (StraightRoad::mWidth + 0.5f)) continue;
-		float tempElevation = 1.0f - (abs(proj) - StraightRoad::mWidth) / (0.5f);
+		if (abs(proj) > (StraightRoad::mWidth + slopeWidth)) continue;
+		float tempElevation = 1.0f - (abs(proj) - StraightRoad::mWidth) / (slopeWidth);
 		if (tempElevation > 1.0f) tempElevation = 1.0f;
 		if (tempElevation < 0.0f) tempElevation = 0.0f;
 		float newElevation = 0.5f * tempElevation;
@@ -107,9 +108,8 @@ float World::CalcualteElevationAtPoint(float x, float z)
 		vec3 roadQuadrantDir = normalize(vec3(mTRoads[i].mDir.x, 0.0f, mTRoads[i].mDir.y));
 		float angle = dot(roadQuadrantDir, normalize(pRel));
 		if (angle < cos(PI_DIV4)) continue;
-		if (dist >(TurnRoad::mWidth + 0.5f)) continue;
-
-		float tempElevation = 1.0f - (dist - StraightRoad::mWidth) / (0.5f);
+		if (dist > (TurnRoad::mWidth + slopeWidth)) continue;
+		float tempElevation = 1.0f - (dist - StraightRoad::mWidth) / (slopeWidth);
 		if (tempElevation > 1.0f) tempElevation = 1.0f;
 		if (tempElevation < 0.0f) tempElevation = 0.0f;
 		float newElevation = 0.5f * tempElevation;
