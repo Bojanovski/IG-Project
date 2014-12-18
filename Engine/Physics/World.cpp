@@ -43,7 +43,7 @@ void World::Initialize(const vec2 &carPos, float carYRot)
 	mCar.mPos = vec3(carPos.x, elevation, carPos.y);
 	mCar.UpdateTransformationMatrix();
 	mCar.UpdateTransformationMatrix(); // two times for "_previous" data
-	mChassis.AddToPosition(vec3(carPos.x, elevation, carPos.y));
+	mChassis.AddToPosition(vec3(carPos.x, elevation, carPos.y), false);
 	mChassis.UpdateTransformationMatrices();
 	mChassis.UpdateTransformationMatrices(); // two times for "_previous" data
 }
@@ -207,7 +207,7 @@ void World::Update(float dt)
 			vec4 newCPos = (newFront + newBack) * 0.5f;
 			vec4 offsetPos = newCPos - cPos;
 			offsetPos.y = 0.0f;
-			mChassis.AddToPosition(vec3(offsetPos));
+			mChassis.AddToPosition(vec3(offsetPos), (mCarSpeed < 0.0f));
 			float angle = radians(glm::angle(dirN, newDirN));
 			mChassis.AddToYRot(sign(mCarSteering) * abs(angle) * sign(mCarSpeed));
 		}

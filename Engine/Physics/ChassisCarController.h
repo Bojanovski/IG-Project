@@ -27,7 +27,7 @@ namespace engine_physics
 	private:
 		void UpdateTransformationMatrices();
 		void Update(float dt);
-		void AddToPosition(glm::vec3 v);
+		void AddToPosition(glm::vec3 v, bool backWards);
 		void  AddToYRot(float yRot) { mYRot += yRot; }
 		void SetSteering(float yRot) { mYSteeringRot = yRot; }
 
