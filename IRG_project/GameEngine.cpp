@@ -75,8 +75,9 @@ GameEngine::GameEngine(void)
     EventHandler::AddEventListener(&carCamera);
     EventHandler::AddEventListener(&freeCamera);
     EventHandler::AddUpdateable(&carCamera);
+	EventHandler::AddUpdateable(&freeCamera);
 
-    r.SetCamera(&carCamera);
+    r.SetCamera(&freeCamera);
 
     // Sounds
     // start the sound engine with default parameters

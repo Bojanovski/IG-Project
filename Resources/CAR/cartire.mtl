@@ -1,0 +1,12 @@
+# Blender MTL File: 'cartire.blend'
+# Material Count: 1
+
+newmtl Wheel
+Ns 890.196078
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 1
+map_Kd cartire.jpg

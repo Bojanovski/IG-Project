@@ -8,10 +8,10 @@ void CarModel::LoadModel(const string &path)
 {
     static const string files[] = {
         "carbody.obj",
-        "leftfronttire.obj",
-        "rightfronttire.obj",
-        "leftbacktire.obj",
-        "rightbacktire.obj",
+        "cartire.obj",
+        "cartire.obj",
+        "cartire.obj",
+        "cartire.obj",
     };
 
     for(const auto &file : files)
