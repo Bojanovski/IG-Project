@@ -6,6 +6,7 @@
 #include <Engine/Physics/World.h>
 #include <irrKlang.h>
 #include "Car.h"
+#include "Terrain.h"
 #include "CarCameraHandler.h"
 #include "RacingTrack.h"
 #include "PostProcessAA.h"
@@ -33,6 +34,7 @@ private:
     //3D
     RacingTrack rt;
     CarModel car;
+	Terrain terrain;
     engine::DefaultCameraHandler freeCamera;
     CarCameraHandler carCamera;
     PostProcessAA postProcess;

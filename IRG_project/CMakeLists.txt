@@ -9,6 +9,7 @@ set(IRG_project_SRCS
     RacingTrack.cpp
     CarCameraHandler.cpp
     GraphicsSettings.cpp
+    Terrain.cpp
 )
 
 # Define the header files.
@@ -19,6 +20,7 @@ set(IRG_project_HDRS
     RacingTrack.h
     CarCameraHandler.h
     GraphicsSettings.h
+    Terrain.h
 )
 
 file(COPY Shaders DESTINATION .)
