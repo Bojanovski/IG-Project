@@ -50,7 +50,7 @@ namespace engine_physics
 
 		CarRigidBody mCar;
 		ChassisCarController mChassis;
-		bool mGoForward, mGoRight, mGoLeft;
+		bool mGoForward, mGoBackwards, mGoRight, mGoLeft;
 		float mCarSteering, mCarSpeed, mCarSpeedLimit;
 		glm::vec3 mGravitiy;
 		std::vector<StraightRoad> mSRoads;

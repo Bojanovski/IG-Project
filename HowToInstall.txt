@@ -8,6 +8,7 @@ Sta treba instalirat:
 - glew library: http://glew.sourceforge.net/
 - DevIL: http://openil.sourceforge.net/
 - irrKlang: http://www.ambiera.com/irrklang/downloads.html
+- LeapMotionSDK: https://developer.leapmotion.com/
 - OpenGL 3.3+ (ovo vjerojatno imate)
 - Cmake: http://www.cmake.org/
 
@@ -16,13 +17,14 @@ Kako buildat:
 1. Instalirate sve ovo gore
 2. Napravite environment varijablu SDL2DIR koja pokazuje na root SDL2 direktorija
 3. Napravite environment varijablu GLEW_HOME koja pokazuje na root GLEW direktorija
-3. Napravite environment varijablu IRRKLANG_HOME koja pokazuje na root irrKlang direktorija
-4. Stavite put do glew32.dll, sdl2.dll i irrKlang dllova u PATH (ili ih metnete u system folder od windowsa)
-5. Stavite put do DevIL direktorija u path
-6. Pokrenete CMake gui i u "Where is the source code" metnete path do ovog direktorija.
+4. Napravite environment varijablu IRRKLANG_HOME koja pokazuje na root irrKlang direktorija
+5. Napravite environment varijablu LEAPMOTION_ROOT koja pokazuje na LeapSDK direktorij
+6. Stavite put do glew32.dll, sdl2.dll i irrKlang dllova u PATH (ili ih metnete u system folder od windowsa)
+7. Stavite put do DevIL direktorija u path
+8. Pokrenete CMake gui i u "Where is the source code" metnete path do ovog direktorija.
    U "Where to build the binaries" metnete gdje vec ocete da se napravi projekt.
    Zatim stisnete dole Configure, pa vas pite za koj IDE i kompajler da napravi projekt, odaberite sto hocete/imate.
    Zatim stisnete Generate, i kad zavrsi gotovi ste.
-7. Pokrenite projekt i buildajte!
+9. Pokrenite projekt i buildajte!
 
 Ako ima problema vicite.

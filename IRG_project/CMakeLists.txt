@@ -33,4 +33,5 @@ target_link_libraries(IRG_project
     ${GLEW_LIBRARY}
     ${OPENGL_LIBRARIES}
     ${IRRKLANG_LIBRARIES}
+	${LEAPMOTION_LIBRARIES}
 )

@@ -235,9 +235,9 @@ void ChassisCarController::Update(float dt)
 	mCar->AddForceAtPoint(damping*mDampingC_outerCrossSprings, vec3(cpWorld));
 }
 
-void ChassisCarController::AddToPosition(glm::vec3 v)
+void ChassisCarController::AddToPosition(glm::vec3 v, bool backWards)
 {
 	float length = glm::sqrt(dot(v, v));
-	mWheelsRotation += length / mWheelsRadius;
+	mWheelsRotation += length / mWheelsRadius * ((backWards) ? -1.0f : 1.0f);
 	mPos += v;
 }
