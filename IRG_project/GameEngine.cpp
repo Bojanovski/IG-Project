@@ -28,13 +28,13 @@ GameEngine::GameEngine(void)
     sgbg.SetOffset(vec2(0.0f, 0.0f));
     sgbg.SetSize(vec2(256.0f, 256.0f));
     sgbg.SetPosition(vec2(0.15f, 0.85f));
-    sgbg.SetScale(vec2(0.50f, 0.50f));
+    sgbg.SetScale(vec2(0.75f, 0.75f));
 
     sgn.SetTexture(hud);
     sgn.SetOffset(vec2(256.0f, 0.0f));
     sgn.SetSize(vec2(256.0f, 256.0f));
     sgn.SetPosition(vec2(0.15f, 0.85f));
-    sgn.SetScale(vec2(0.50f, 0.50f));
+    sgn.SetScale(vec2(0.75f, 0.75f));
 
     // Init racing track
     rt.LoadModels("../Resources/Road/", "road_str.obj", "road_curve.obj", "barrier.obj");
@@ -44,16 +44,20 @@ GameEngine::GameEngine(void)
     // Player car
     car.LoadModel("../Resources/CAR/");
 
+	// Terrain
+	terrain.LoadModel("../Resources/Terrain/", "terrain.obj");
+
     // Init renderer
     EventHandler::AddEventListener(&r);
     r.SetClearColor(vec3(0.2f, 0.2f, 0.2f));
-    r.SetViewSize(vec2(640, 480)); // Screen size (for proper sprite scaling)
+	r.SetViewSize(vec2(GraphicsSettings::windowWidth, GraphicsSettings::windowHeight)); // Screen size (for proper sprite scaling)
 
     // Add objects
     r.AddSprite(&sgbg);
     r.AddSprite(&sgn);
 
     r.AddModel(&car.GetModel());
+	r.AddModel(&terrain.GetModel());
     r.AddInstancedModel(rt.GetRoadBlock());
     r.AddInstancedModel(rt.GetStraightRoad());
     r.AddInstancedModel(rt.GetTurnRoad());
@@ -72,7 +76,11 @@ GameEngine::GameEngine(void)
     EventHandler::AddEventListener(&freeCamera);
     EventHandler::AddUpdateable(&carCamera);
 
+<<<<<<< HEAD
+	r.SetCamera(&carCamera);
+=======
     r.SetCamera(&carCamera);
+>>>>>>> origin/master
 
     // Sounds
     // start the sound engine with default parameters
@@ -115,7 +123,7 @@ void GameEngine::RenderingLoop()
             speed = 160.0f;
         if(speed < 0.0f)
             speed = 0.0f;
-        sgn.SetAngle(-120.0f + 240.0f * speed / 160.0f);
+        sgn.SetAngle(-120.0f + 240.0f * speed * 5 / 160.0f);
 
         // Display
         postProcess.SetAsRenderTarget();

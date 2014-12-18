@@ -25,7 +25,7 @@ Key bindings:
     - 9/0: speed up/down the free camera
     
     - I/J/K/L: control car
-    - 1/2/3/4: switch gears
+    - 1/2/3: switch gears
 
 
 You can 'draw' the track in ../Resources/TrackDescription.txt. First two numbers represent height and width of the track.

@@ -22,6 +22,7 @@ World::World()
 mGravitiy(0.0f, -9.81f, 0.0f),
 mChassis(&mCar),
 mGoForward(false),
+mGoBackwards(false),
 mGoRight(false),
 mGoLeft(false),
 mCarSteering(0.0f),
@@ -38,11 +39,11 @@ World::~World()
 
 void World::Initialize(const vec2 &carPos, float carYRot)
 {
-	float elevation = 0.7f;
+	float elevation = 0.8f;
 	mCar.mPos = vec3(carPos.x, elevation, carPos.y);
 	mCar.UpdateTransformationMatrix();
 	mCar.UpdateTransformationMatrix(); // two times for "_previous" data
-	mChassis.AddToPosition(vec3(carPos.x, elevation, carPos.y));
+	mChassis.AddToPosition(vec3(carPos.x, elevation, carPos.y), false);
 	mChassis.UpdateTransformationMatrices();
 	mChassis.UpdateTransformationMatrices(); // two times for "_previous" data
 }
@@ -78,7 +79,8 @@ void World::AddTurnRoads(std::vector<glm::mat4> &tRoads)
 float World::CalcualteElevationAtPoint(float x, float z)
 {
 	vec3 p4 = vec3(x, 0.0f, z);
-	float elevation = 0.0f;
+	float elevation = 0.25f;
+	float slopeWidth = 1.0f;
 	// straight roads
 	for (unsigned int i = 0; i < mSRoads.size(); ++i)
 	{
@@ -89,8 +91,8 @@ float World::CalcualteElevationAtPoint(float x, float z)
 		float proj = dot(pDir, towardsP); // this is also the distance from line that goes through road segment
 		float projOnRoad = dot(pDir, roadDir);
 		if (abs(projOnRoad) > StraightRoad::mHalfLength) continue;
-		if (abs(proj) > (StraightRoad::mWidth + 0.5f)) continue;
-		float tempElevation = 1.0f - (abs(proj) - StraightRoad::mWidth) / (0.5f);
+		if (abs(proj) > (StraightRoad::mWidth + slopeWidth)) continue;
+		float tempElevation = 1.0f - (abs(proj) - StraightRoad::mWidth) / (slopeWidth);
 		if (tempElevation > 1.0f) tempElevation = 1.0f;
 		if (tempElevation < 0.0f) tempElevation = 0.0f;
 		float newElevation = 0.5f * tempElevation;
@@ -106,9 +108,8 @@ float World::CalcualteElevationAtPoint(float x, float z)
 		vec3 roadQuadrantDir = normalize(vec3(mTRoads[i].mDir.x, 0.0f, mTRoads[i].mDir.y));
 		float angle = dot(roadQuadrantDir, normalize(pRel));
 		if (angle < cos(PI_DIV4)) continue;
-		if (dist >(TurnRoad::mWidth + 0.5f)) continue;
-
-		float tempElevation = 1.0f - (dist - StraightRoad::mWidth) / (0.5f);
+		if (dist > (TurnRoad::mWidth + slopeWidth)) continue;
+		float tempElevation = 1.0f - (dist - StraightRoad::mWidth) / (slopeWidth);
 		if (tempElevation > 1.0f) tempElevation = 1.0f;
 		if (tempElevation < 0.0f) tempElevation = 0.0f;
 		float newElevation = 0.5f * tempElevation;
@@ -121,23 +122,31 @@ float World::CalcualteElevationAtPoint(float x, float z)
 
 void World::Update(float dt)
 {
-	if (mGoForward && mCarSpeed < mCarSpeedLimit)
+	float backwardsSpeedLimit = -3.0f;
+	// must be F, not B, must be below speed limit and not be going in reverse
+	if (mGoForward && !mGoBackwards && mCarSpeed < mCarSpeedLimit && mCarSpeed >= 0.0f)
 	{
 		float carAcceleration = 3.0f;
 		mCarSpeed += carAcceleration * dt;
 	}
+	// must be B, not F, must be below reverse speed limit and not be going in positive direction
+	else if (mGoBackwards && !mGoForward && mCarSpeed > backwardsSpeedLimit && mCarSpeed <= 0.0f)
+	{
+		float carAcceleration = -3.0f;
+		mCarSpeed += carAcceleration * dt;
+	}
 	else
 	{
-		float carDeacceleration = -6.0f;
-		mCarSpeed += carDeacceleration * dt;
-		if (mCarSpeed < 0.0f) mCarSpeed = 0.0f;
+		float carDeacceleration = -6.0f*sign(mCarSpeed);
+		if (abs(mCarSpeed) > abs(carDeacceleration) * dt) mCarSpeed += carDeacceleration * dt;
+		else mCarSpeed = 0.0f;
 	}
+
 	if (mGoLeft != mGoRight)
 	{
 		float coeff = (3.0f / abs(mCarSpeed));
 		if (coeff > 1.0f) coeff = 1.0f;
 		float currentMaxSteering = 3.14f / 4.0f * coeff;
-		//if (mCarSpeed > 1.0f) currentMaxSteering /= mCarSpeed * 0.01f;
 		mCarSteering += ((mGoLeft) ? 1.0f : -1.0f) * 2.0f * dt;
 		if (mCarSteering > currentMaxSteering) mCarSteering = currentMaxSteering;
 		if (mCarSteering < -currentMaxSteering) mCarSteering = -currentMaxSteering;
@@ -175,24 +184,32 @@ void World::Update(float dt)
 	{
 		float s1 = (-b + glm::sqrt(D)) / (2.0f*a);
 		float s2 = (-b - glm::sqrt(D)) / (2.0f*a);
-		float s = -1.0f;
-		if (s1 >= 0.0f) s = s1;
-		if (s2 < s && s2 >= 0.0f) s = s2; // we need the smaller one (but positive)
+		float s = 0.0f;
+		bool isOk = false;
+		if (mCarSpeed > 0.0f)
+		{
+			s = s1;
+			if (s2 < s && s2 >= 0.0f) s = s2; // we need the smaller one (but positive)
+			if (s > 0.0f && s < length) isOk = true;
+		}
+		else if (mCarSpeed < 0.0f)
+		{
+			s = s1;
+			if (s > 0.0f) s = s2;
+			if (s < 0.0f && s > -length) isOk = true;
+		}
 
-		if (s > 0.0f && s < length)
+		if (isOk)
 		{
 			vec4 newBack = back + s*dirN;
 			vec4 newDir = newFront - newBack;
 			vec4 newDirN = normalize(newDir);
 			vec4 newCPos = (newFront + newBack) * 0.5f;
 			vec4 offsetPos = newCPos - cPos;
-			mChassis.AddToPosition(vec3(offsetPos));
+			offsetPos.y = 0.0f;
+			mChassis.AddToPosition(vec3(offsetPos), (mCarSpeed < 0.0f));
 			float angle = radians(glm::angle(dirN, newDirN));
-			mChassis.AddToYRot(sign(mCarSteering) * abs(angle));
-
-			//static float jo = 3.0f;
-			//jo += dt;
-			//mChassis.mElevation_backLeft = 0.5f*sin(jo);
+			mChassis.AddToYRot(sign(mCarSteering) * abs(angle) * sign(mCarSpeed));
 		}
 	}
 
@@ -231,6 +248,9 @@ void World::KeyPress(const SDL_KeyboardEvent &e)
 	case SDLK_i:
 		mGoForward = (e.type == SDL_KEYDOWN);
 		break;
+	case SDLK_k:
+		mGoBackwards = (e.type == SDL_KEYDOWN);
+		break;
 	case SDLK_j:
 		mGoLeft = (e.type == SDL_KEYDOWN);
 		break;
@@ -245,9 +265,6 @@ void World::KeyPress(const SDL_KeyboardEvent &e)
 		break;
 	case SDLK_3:
 		mCarSpeedLimit = 5.0f * 3.0f;
-		break;
-	case SDLK_4:
-		mCarSpeedLimit = 5.0f * 4.0f;
 		break;
 	default:
 		break;

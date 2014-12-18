@@ -8,9 +8,12 @@
 #include <Engine/Core/EventListener.h>
 #include <Engine/Core/Updateable.h>
 #include <vector>
+#include <Leap.h>
 
 namespace engine
 {
+	struct VirtualKey;
+
     //Handles SDL event and dispatches them to EventListeners
     //Also handles per frame time updates
     class EventHandler
@@ -37,6 +40,9 @@ namespace engine
         static std::vector<EventListener*> listenerList;
 
         static std::vector<Updateable*> updateableList;
+
+		friend VirtualKey;
+		static Leap::Controller leap;
     };
 }
 

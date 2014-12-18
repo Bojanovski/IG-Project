@@ -12,7 +12,7 @@ ChassisCarController::ChassisCarController(CarRigidBody *car)
 mPos(vec3(0.0f)),
 mYRot(0.0f),
 mSpringCoefficient(200.0f),
-mWheelsRadius(0.3f),
+mWheelsRadius(0.5f),
 mWheelsRotation(0.0f),
 mYSteeringRot(0.0f),
 mElevation_frontLeft(0.0f),
@@ -235,9 +235,9 @@ void ChassisCarController::Update(float dt)
 	mCar->AddForceAtPoint(damping*mDampingC_outerCrossSprings, vec3(cpWorld));
 }
 
-void ChassisCarController::AddToPosition(glm::vec3 v)
+void ChassisCarController::AddToPosition(glm::vec3 v, bool backWards)
 {
 	float length = glm::sqrt(dot(v, v));
-	mWheelsRotation += length / mWheelsRadius;
+	mWheelsRotation += length / mWheelsRadius * ((backWards) ? -1.0f : 1.0f);
 	mPos += v;
 }

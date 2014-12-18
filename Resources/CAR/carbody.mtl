@@ -1,11 +1,12 @@
-# Blender MTL File: 'None'
+# Blender MTL File: 'carbody.blend'
 # Material Count: 1
 
-newmtl remapele
-Ns 90.196078
-Ka 0.100000 0.100000 0.100000
-Kd 0.446745 0.000000 0.000000
-Ks 0.164706 0.164706 0.164706
+newmtl Car
+Ns 996.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.013534 0.013534 0.013534
 Ni 1.000000
-d 1.000000
+d 0.000000
 illum 2
+map_Kd carbody.jpg

@@ -232,7 +232,10 @@ namespace engine
 	{
 		if (e.type == SDL_WINDOWEVENT)
 			if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+			{
 				glViewport(0, 0, e.window.data1, e.window.data2);
+				SetViewSize(vec2(e.window.data1, e.window.data2));
+			}
 	}
 
     void Renderer::CleanUp()
