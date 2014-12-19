@@ -12,7 +12,7 @@ ChassisCarController::ChassisCarController(CarRigidBody *car)
 mPos(vec3(0.0f)),
 mYRot(0.0f),
 mSpringCoefficient(200.0f),
-mWheelsRadius(0.3f),
+mWheelsRadius(0.5f),
 mWheelsRotation(0.0f),
 mYSteeringRot(0.0f),
 mElevation_frontLeft(0.0f),
