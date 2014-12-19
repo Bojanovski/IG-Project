@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <Engine/Geometry/InstancedModel.h>
+#include <map>
 
 class RacingTrackDescription
 {
@@ -29,7 +30,13 @@ class RacingTrack
 public:
     RacingTrack(void);
 
-    void LoadModels(const std::string &path, const std::string &straightfn, const std::string &turnfn, const std::string &roadBlockfn);
+    void LoadModels(const std::string &path, 
+        const std::string &straightfn, 
+        const std::string &turnfn, 
+        const std::string &Tfn,
+        const std::string &crossfn,
+        const std::string &roadBlockfn);
+
     void LoadToGPU();
     //returns car transform
     std::pair<glm::vec2, float> Create(RacingTrackDescription &rtd);
@@ -37,13 +44,17 @@ public:
 
     const engine::InstancedModel* GetStraightRoad() const;
     const engine::InstancedModel* GetTurnRoad() const;
+    const engine::InstancedModel* GetTRoad() const;
+    const engine::InstancedModel* GetCrossRoad() const;
     const engine::InstancedModel* GetRoadBlock() const;
 
 private:
-    void PlaceRoadBlocks(bool straight, const glm::mat4& T);
+    //void PlaceRoadBlocks(bool straight, const glm::mat4& T);
 
     engine::InstancedModel straightRoad;
     engine::InstancedModel turnRoad;
+    engine::InstancedModel TRoad;
+    engine::InstancedModel crossRoad;
     engine::InstancedModel roadBlock;
 
     float roadTileDim;
@@ -53,6 +64,7 @@ private:
     float turnRoadX, turnRoadZ;
 
     glm::mat4 rotations[4];
+    std::map<std::string, std::pair<glm::mat4, std::vector<glm::mat4>* > > layoutToTransform;
 };
 
 

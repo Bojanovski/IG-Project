@@ -37,7 +37,12 @@ GameEngine::GameEngine(void)
     sgn.SetScale(vec2(0.75f, 0.75f));
 
     // Init racing track
-    rt.LoadModels("../Resources/Road/", "road_str.obj", "road_curve.obj", "barrier.obj");
+    rt.LoadModels("../Resources/Road/",
+        "road_str.obj",
+        "road_curve.obj",
+        "road_tcross.obj",
+        "road_cross.obj",
+        "barrier.obj");
     const pair<vec2, float> carTransform = rt.Create(RacingTrackDescription("../Resources/TrackDescription.txt"));
     rt.LoadToGPU();
 
@@ -61,6 +66,8 @@ GameEngine::GameEngine(void)
     r.AddInstancedModel(rt.GetRoadBlock());
     r.AddInstancedModel(rt.GetStraightRoad());
     r.AddInstancedModel(rt.GetTurnRoad());
+    r.AddInstancedModel(rt.GetTRoad());
+    r.AddInstancedModel(rt.GetCrossRoad());
 
     // Physics
 	vector<mat4> sRoads = rt.GetStraightRoad()->transforms;
