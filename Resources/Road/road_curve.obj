@@ -1,7 +1,6 @@
 # Blender v2.72 (sub 0) OBJ File: 'road_curve.blend'
 # www.blender.org
 mtllib road_curve.mtl
-o ROAD_CURVE_STR_Cube.001
 v -7.999999 0.200000 -3.724049
 v -7.999999 0.200000 0.000000
 v -7.999999 0.200000 -4.000000
