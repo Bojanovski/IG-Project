@@ -163,7 +163,7 @@ void GameEngine::RenderingLoop()
 
         // Set screeching tires
         skripanje->setPosition(carPositionVec3df);
-        if (phyWorld.isTurning() && (speed / 20.0f > 0.76f)) {
+        if (phyWorld.isTurning() && (speed / 15.0f > 0.76f)) {
             if (!skripiOdPrije) {
                 skripanje->setIsPaused(false);
                 skripiOdPrije = true;
