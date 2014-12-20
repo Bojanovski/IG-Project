@@ -76,6 +76,77 @@ void World::AddTurnRoads(std::vector<glm::mat4> &tRoads)
 	}
 }
 
+void World::AddTRoads(std::vector<glm::mat4> &TRoads)
+{
+	StraightRoad road_1;
+	TurnRoad road_2, road_3;
+	for (unsigned int i = 0; i < TRoads.size(); ++i)
+	{
+		// first straight road
+		vec4 dir = TRoads[i] * vec4(1.0f, 0.0f, 0.0f, 0.0f);
+		dir = normalize(dir);
+		vec4 pos = TRoads[i] * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		road_1.mDir = vec2(dir.x, dir.z);
+		road_1.mPos = vec2(pos.x, pos.z);
+		mSRoads.push_back(road_1);
+
+		// now the first curved road
+		dir = TRoads[i] * vec4(1.0f, 0.0f, 1.0f, 0.0f);
+		dir = normalize(dir);
+		pos = TRoads[i] * vec4(0.0f, 0.0f, 0.0f, 1.0f) - dir*glm::sqrt(StraightRoad::mHalfLength*StraightRoad::mHalfLength*2.0f);
+		road_2.mDir = vec2(dir.x, dir.z);
+		road_2.mPos = vec2(pos.x, pos.z);
+		mTRoads.push_back(road_2);
+
+		// now the second curved road
+		dir = TRoads[i] * vec4(-1.0f, 0.0f, 1.0f, 0.0f);
+		dir = normalize(dir);
+		pos = TRoads[i] * vec4(0.0f, 0.0f, 0.0f, 1.0f) - dir*glm::sqrt(StraightRoad::mHalfLength*StraightRoad::mHalfLength*2.0f);
+		road_3.mDir = vec2(dir.x, dir.z);
+		road_3.mPos = vec2(pos.x, pos.z);
+		mTRoads.push_back(road_3);
+	}
+}
+
+void World::AddCrossRoads(std::vector<glm::mat4> &cRoads)
+{
+	TurnRoad road_1, road_2, road_3, road_4;
+	for (unsigned int i = 0; i < cRoads.size(); ++i)
+	{
+		// the first curved road
+		vec4 dir = cRoads[i] * vec4(1.0f, 0.0f, 1.0f, 0.0f);
+		dir = normalize(dir);
+		vec4 pos = cRoads[i] * vec4(0.0f, 0.0f, 0.0f, 1.0f) - dir*glm::sqrt(StraightRoad::mHalfLength*StraightRoad::mHalfLength*2.0f);
+		road_1.mDir = vec2(dir.x, dir.z);
+		road_1.mPos = vec2(pos.x, pos.z);
+		mTRoads.push_back(road_1);
+
+		// now the second curved road
+		dir = cRoads[i] * vec4(-1.0f, 0.0f, 1.0f, 0.0f);
+		dir = normalize(dir);
+		pos = cRoads[i] * vec4(0.0f, 0.0f, 0.0f, 1.0f) - dir*glm::sqrt(StraightRoad::mHalfLength*StraightRoad::mHalfLength*2.0f);
+		road_2.mDir = vec2(dir.x, dir.z);
+		road_2.mPos = vec2(pos.x, pos.z);
+		mTRoads.push_back(road_2);
+
+		// now the third curved road
+		dir = cRoads[i] * vec4(1.0f, 0.0f, -1.0f, 0.0f);
+		dir = normalize(dir);
+		pos = cRoads[i] * vec4(0.0f, 0.0f, 0.0f, 1.0f) - dir*glm::sqrt(StraightRoad::mHalfLength*StraightRoad::mHalfLength*2.0f);
+		road_3.mDir = vec2(dir.x, dir.z);
+		road_3.mPos = vec2(pos.x, pos.z);
+		mTRoads.push_back(road_3);
+
+		// now the fourth curved road
+		dir = cRoads[i] * vec4(-1.0f, 0.0f, -1.0f, 0.0f);
+		dir = normalize(dir);
+		pos = cRoads[i] * vec4(0.0f, 0.0f, 0.0f, 1.0f) - dir*glm::sqrt(StraightRoad::mHalfLength*StraightRoad::mHalfLength*2.0f);
+		road_4.mDir = vec2(dir.x, dir.z);
+		road_4.mPos = vec2(pos.x, pos.z);
+		mTRoads.push_back(road_4);
+	}
+}
+
 float World::CalcualteElevationAtPoint(float x, float z)
 {
 	vec3 p4 = vec3(x, 0.0f, z);
