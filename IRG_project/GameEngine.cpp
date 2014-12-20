@@ -72,9 +72,13 @@ GameEngine::GameEngine(void)
     // Physics
 	vector<mat4> sRoads = rt.GetStraightRoad()->transforms;
 	vector<mat4> tRoads = rt.GetTurnRoad()->transforms;
+	vector<mat4> TRoads = rt.GetTRoad()->transforms;
+	vector<mat4> cRoads = rt.GetCrossRoad()->transforms;
     phyWorld.Initialize(carTransform.first, carTransform.second);
 	phyWorld.AddStraightRoads(sRoads);
 	phyWorld.AddTurnRoads(tRoads);
+	phyWorld.AddTRoads(TRoads);
+	phyWorld.AddCrossRoads(cRoads);
     EventHandler::AddEventListener(&phyWorld);
     EventHandler::AddUpdateable(&phyWorld);
 

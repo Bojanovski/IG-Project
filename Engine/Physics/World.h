@@ -37,6 +37,8 @@ namespace engine_physics
 		void Initialize(const glm::vec2 &carPos, float carYRot);
 		void AddStraightRoads(std::vector<glm::mat4> &sRoads);
 		void AddTurnRoads(std::vector<glm::mat4> &tRoads);
+		void AddTRoads(std::vector<glm::mat4> &TRoads);
+		void AddCrossRoads(std::vector<glm::mat4> &cRoads);
 		float GetCarSpeed() { return mCarSpeed; }
 		float getSpeedLimit() { return mCarSpeedLimit; }
 		glm::vec3 getCarPosition() { return mChassis.mPos; }
@@ -54,7 +56,7 @@ namespace engine_physics
 		float mCarSteering, mCarSpeed, mCarSpeedLimit;
 		glm::vec3 mGravitiy;
 		std::vector<StraightRoad> mSRoads;
-		std::vector<TurnRoad> mTRoads;
+		std::vector<TurnRoad> mTurnRoads;
 	};
 }
 
