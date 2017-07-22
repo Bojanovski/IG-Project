@@ -16,7 +16,7 @@ Igor Kramaric
 Jure Ratkovic
     -3D graphics
 Tomislav Tunkovic
-    -Marketing and PR
+    -Third party software manager
 
 
 Key bindings:
