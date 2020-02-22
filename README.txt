@@ -1,6 +1,4 @@
-Alternatively controlled car game.
-
-Controlled via mose/keyboard and Leap Motion.
+A car game where the controls are the BCI inputs form the Leap Motion device. Mouse and keyboard can also be used.
 
 Made by:
 Bojan Lovrovic
