@@ -1,5 +1,11 @@
 A car game where the controls are the BCI inputs form the Leap Motion device. Mouse and keyboard can also be used.
 
+Video link:
+
+https://www.youtube.com/watch?v=H321fLMaC3M
+
+--------------------------------------------------------------------
+
 Made by:
 Bojan Lovrovic
     -Team leader
@@ -16,6 +22,7 @@ Jure Ratkovic
 Tomislav Tunkovic
     -Third party software manager
 
+--------------------------------------------------------------------
 
 Key bindings:
     - C :switch between car and free camera
@@ -25,6 +32,7 @@ Key bindings:
     - I/J/K/L: control car
     - 1/2/3: switch gears
 
+--------------------------------------------------------------------
 
 You can 'draw' the track in ../Resources/TrackDescription.txt. First two numbers represent height and width of the track.
 Then there is height * width grid of characters representing the track. Meaning of each character:
@@ -32,5 +40,6 @@ Then there is height * width grid of characters representing the track. Meaning 
     - 'R' there is a road segment on this grid cell
     - 'C' there is a road segment on this grid cell, and it is the cars starting point
 
+--------------------------------------------------------------------
 
 You can edit the graphics settings in ../Resources/GraphicsSettings.txt
