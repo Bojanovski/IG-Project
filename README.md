@@ -2,25 +2,16 @@ A car game where the controls are the BCI inputs form the Leap Motion device. Mo
 
 Video link:
 
-https://www.youtube.com/watch?v=H321fLMaC3M
+https://www.youtube.com/watch?v=DXP-05L71n0
 
 --------------------------------------------------------------------
 
 Made by:
-Bojan Lovrovic
-    -Team leader
-    -Physics
-Branimir Klaric
-    -Sound
-Bruno Pregun
-    -2D graphics
-    -Modeling
-Igor Kramaric
-    -Model loading
-Jure Ratkovic
-    -3D graphics
-Tomislav Tunkovic
-    -Third party software manager
+    -Bojan Lovrovic (Team leader, Physics)
+    -Branimir Klaric (Sound)
+    -Bruno Pregun (2D graphics, Modeling, Igor Kramaric, Model loading)
+    -Jure Ratkovic (3D graphics)
+    -Tomislav Tunkovic (Third party software manager)
 
 --------------------------------------------------------------------
 
